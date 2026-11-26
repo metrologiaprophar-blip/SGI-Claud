@@ -2,18 +2,20 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { RUC_PATTERN } from "@/lib/identity";
 import type { ActionResult } from "@/lib/result";
 import { getServiceContext, parseForm, runAction } from "@/server/action";
 import { updateOrganization } from "./service";
 
 const schema = z.object({
   name: z.string().trim().min(2, "too_short").max(160, "too_long"),
+  // RUC de Ecuador: 13 dígitos; el de sociedades termina en 001.
   taxId: z
     .string()
     .trim()
-    .max(20, "too_long")
     .optional()
-    .transform((v) => v || null),
+    .transform((v) => v || null)
+    .refine((v) => v === null || RUC_PATTERN.test(v), "invalid_ruc"),
   timezone: z
     .string()
     .trim()

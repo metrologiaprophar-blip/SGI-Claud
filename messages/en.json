@@ -316,7 +316,7 @@
       "code": "Corporate ID",
       "codeHelp": "Users enter it to sign in. Cannot be changed.",
       "name": "Legal name",
-      "taxId": "Tax ID",
+      "taxId": "RUC (Ecuador tax ID)",
       "timezone": "Time zone",
       "passwordMaxAgeDays": "Password expiry (days)",
       "sessionIdleMinutes": "Sign out after inactivity (minutes)",
@@ -391,6 +391,7 @@
     "out_of_range": "Value outside the allowed range.",
     "reason_required": "State the reason (at least 3 characters).",
     "invalid_timezone": "Invalid time zone.",
-    "invalid": "Invalid value."
+    "invalid": "Invalid value.",
+    "invalid_ruc": "Invalid RUC: it must have 13 digits and end in 001."
   }
 }

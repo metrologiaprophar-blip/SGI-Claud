@@ -316,7 +316,7 @@
       "code": "ID corporativo",
       "codeHelp": "Os usuários o informam para entrar. Não pode ser alterado.",
       "name": "Razão social",
-      "taxId": "Identificação fiscal",
+      "taxId": "RUC (identificação fiscal do Equador)",
       "timezone": "Fuso horário",
       "passwordMaxAgeDays": "Expiração de senhas (dias)",
       "sessionIdleMinutes": "Encerrar sessão por inatividade (minutos)",
@@ -391,6 +391,7 @@
     "out_of_range": "Valor fora do intervalo permitido.",
     "reason_required": "Informe o motivo (mínimo de 3 caracteres).",
     "invalid_timezone": "Fuso horário inválido.",
-    "invalid": "Valor inválido."
+    "invalid": "Valor inválido.",
+    "invalid_ruc": "RUC inválido: deve ter 13 dígitos e terminar em 001."
   }
 }

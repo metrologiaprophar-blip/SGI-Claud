@@ -316,7 +316,7 @@
       "code": "ID corporativo",
       "codeHelp": "Lo usan los usuarios para ingresar. No se puede cambiar.",
       "name": "Razón social",
-      "taxId": "RUC / identificación fiscal",
+      "taxId": "RUC",
       "timezone": "Zona horaria",
       "passwordMaxAgeDays": "Caducidad de contraseñas (días)",
       "sessionIdleMinutes": "Cierre de sesión por inactividad (minutos)",
@@ -391,6 +391,7 @@
     "out_of_range": "Valor fuera del rango permitido.",
     "reason_required": "Indique el motivo (mínimo 3 caracteres).",
     "invalid_timezone": "Zona horaria no válida.",
-    "invalid": "Valor no válido."
+    "invalid": "Valor no válido.",
+    "invalid_ruc": "RUC no válido: debe tener 13 dígitos y terminar en 001."
   }
 }

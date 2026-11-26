@@ -35,6 +35,15 @@ La arquitectura es multiempresa (SaaS), aunque el primer y principal cliente es 
 
 ---
 
+## Contexto regulatorio
+
+| | |
+|---|---|
+| País | **Ecuador** (zona horaria `America/Guayaquil`, moneda USD) |
+| Autoridad sanitaria | ARCSA: inspecciones y certificación de BPM y BPADT, registros sanitarios, notificación de retiros |
+| Identificación fiscal | RUC de 13 dígitos (sociedades: termina en `001`) |
+| Datos personales | LOPDP |
+
 ## 1. Objetivo, alcance y fases
 
 | | |
@@ -140,7 +149,10 @@ Base de datos y esquema compartidos con columna `organizationId` en toda tabla d
 
 Los registros GMP electrónicos deben cumplir **ALCOA+** (atribuible, legible, contemporáneo, original,
 exacto, completo, consistente, perdurable, disponible). Referencias: Guías de BPM de la OMS, PIC/S, EU GMP
-Anexo 11, 21 CFR Part 11, GAMP 5, ICH Q9/Q10 y la normativa de la autoridad sanitaria nacional.
+Anexo 11, 21 CFR Part 11, GAMP 5, ICH Q9/Q10 y la normativa técnica sanitaria vigente de la **ARCSA**
+(Agencia Nacional de Regulación, Control y Vigilancia Sanitaria del Ecuador) para BPM de medicamentos y
+para BPADT de establecimientos farmacéuticos. Los números de resolución vigentes se registrarán en
+configuración y los validará QA antes de citarlos en plantillas o informes.
 
 | Requisito | Cómo se cumple |
 |---|---|
@@ -320,7 +332,7 @@ Respuesta de las acciones: `{ ok: true, data } | { ok: false, error: { code, mes
 | Rendimiento | LCP < 2,5 s en login; acciones < 300 ms p95. |
 | Disponibilidad | Objetivo 99,5 %. |
 | Respaldo | Backup diario cifrado, PITR 7 días, prueba de restauración trimestral; retención de registros GMP según la normativa aplicable (mínimo 1 año tras el vencimiento del lote o 5 años, lo que sea mayor; a confirmar con QA). |
-| Privacidad | Ley de protección de datos personales del país. |
+| Privacidad | Ley Orgánica de Protección de Datos Personales del Ecuador (LOPDP, 2021). |
 | Accesibilidad | WCAG 2.1 AA. |
 | Navegadores | Últimas 2 versiones de Chrome, Edge, Firefox y Safari; Android 10+, iOS 16+. |
 
@@ -342,7 +354,6 @@ Respuesta de las acciones: `{ ok: true, data } | { ok: false, error: { code, mes
 
 ## 13. Preguntas abiertas
 
-- País y autoridad sanitaria (para citar la normativa exacta de BPM y BPADT en las plantillas).
 - Qué normas ISO además de 9001 forman el SGI (¿ISO/IEC 17025 para metrología? ¿14001? ¿45001?).
 - Orden de las fases F2–F8; propuesta: F2 Documentos → F3 Calidad GMP → F4 Metrología → F5 BPADT.
 - Formato de los dataloggers de temperatura (exportan CSV, API, ninguno).
