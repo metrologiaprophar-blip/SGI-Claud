@@ -276,7 +276,8 @@
     "yourRole": "Seu perfil",
     "areasTitle": "Áreas do sistema",
     "phaseNotice": "Fase 1: núcleo da plataforma. Os módulos BPF serão habilitados por fases.",
-    "toolsAvailable": "{count, plural, =0 {Em breve} one {# ferramenta disponível} other {# ferramentas disponíveis}}"
+    "toolsAvailable": "{count, plural, =0 {Em breve} one {# ferramenta disponível} other {# ferramentas disponíveis}}",
+    "docInbox": "Pendências de documentos"
   },
   "admin": {
     "users": {
@@ -299,7 +300,12 @@
       "unlock": "Desbloquear",
       "editTitle": "Editar usuário",
       "you": "Você",
-      "empty": "Não há usuários."
+      "empty": "Não há usuários.",
+      "permissions": "Permissões BPF",
+      "perm": {
+        "DOC_MANAGE": "Controle de documentos: criar documentos e novas versões",
+        "DOC_APPROVE": "Aprovar documentos e declará-los obsoletos"
+      }
     },
     "resets": {
       "title": "Solicitações de senha",
@@ -382,13 +388,44 @@
     },
     "organization": {
       "update": "Alteração dos dados da empresa"
+    },
+    "document": {
+      "create": "Cadastro de documento",
+      "submit": "Envio para revisão",
+      "review": "Revisão de documento",
+      "review_reject": "Rejeição na revisão",
+      "approve": "Aprovação de documento",
+      "approve_reject": "Rejeição na aprovação",
+      "effective": "Entrada em vigor",
+      "supersede": "Versão substituída",
+      "obsolete": "Documento declarado obsoleto",
+      "download": "Download de documento",
+      "version": {
+        "create": "Nova versão",
+        "cancel": "Rascunho cancelado"
+      },
+      "file": {
+        "upload": "Envio de arquivo",
+        "integrity_error": "Erro de integridade do arquivo"
+      }
+    },
+    "signature": {
+      "authored": "Assinatura: elaborou",
+      "reviewed": "Assinatura: revisou",
+      "approved": "Assinatura: aprovou",
+      "rejected": "Assinatura: rejeitou",
+      "read": "Assinatura: leitura",
+      "obsoleted": "Assinatura: obsoleto",
+      "failed": "Assinatura malsucedida (senha)"
     }
   },
   "auditGroups": {
     "auth": "Autenticação",
     "user": "Usuários",
     "password_reset": "Solicitações de senha",
-    "organization": "Empresa"
+    "organization": "Empresa",
+    "document": "Documentos",
+    "signature": "Assinaturas eletrônicas"
   },
   "errors": {
     "unexpected": "Ocorreu um erro inesperado. Tente novamente.",
@@ -408,7 +445,27 @@
     "password_too_long": "A senha é longa demais (máximo de 64 caracteres).",
     "password_needs_letter_and_digit": "A senha deve incluir letras e números.",
     "password_contains_username": "A senha não pode conter seu usuário.",
-    "password_reused": "Você não pode reutilizar sua senha atual nem as 5 anteriores."
+    "password_reused": "Você não pode reutilizar sua senha atual nem as 5 anteriores.",
+    "invalid_document_code": "Código inválido: use maiúsculas, números, ponto ou hífen (2 a 40 caracteres).",
+    "document_code_taken": "Já existe um documento com esse código.",
+    "invalid_user": "Um dos usuários selecionados é inválido ou está inativo.",
+    "change_summary_required": "Descreva a alteração (mínimo de 5 caracteres).",
+    "document_obsolete": "O documento é obsoleto.",
+    "version_in_progress": "Já existe uma versão em andamento para este documento.",
+    "version_not_editable": "Esta versão não pode mais ser alterada.",
+    "file_required": "Você deve anexar o arquivo do documento.",
+    "file_too_large": "O arquivo excede 20 MB.",
+    "file_type_not_allowed": "Formato não permitido ou arquivo danificado. Use PDF, DOCX, XLSX, DOC ou XLS.",
+    "segregation_of_duties": "O autor, o revisor e o aprovador devem ser três pessoas diferentes.",
+    "approver_without_permission": "O aprovador selecionado não tem permissão para aprovar documentos.",
+    "invalid_effective_date": "A data de vigência não pode ser anterior a hoje.",
+    "signature_password_invalid": "Senha incorreta. A assinatura não foi registrada.",
+    "version_not_in_review": "A versão não está em revisão.",
+    "version_not_pending_approval": "A versão não está aguardando aprovação.",
+    "version_state_changed": "A versão mudou de status enquanto você assinava. Recarregue a página.",
+    "already_acknowledged": "Você já confirmou a leitura desta versão.",
+    "version_not_effective": "A versão não está vigente.",
+    "file_integrity_error": "O arquivo não corresponde à sua impressão registrada. Avise a Garantia da Qualidade."
   },
   "fieldErrors": {
     "required": "Obrigatório.",
@@ -421,6 +478,171 @@
     "reason_required": "Informe o motivo (mínimo de 3 caracteres).",
     "invalid_timezone": "Fuso horário inválido.",
     "invalid": "Valor inválido.",
-    "invalid_ruc": "RUC inválido: deve ter 13 dígitos e terminar em 001."
+    "invalid_ruc": "RUC inválido: deve ter 13 dígitos e terminar em 001.",
+    "invalid_document_code": "Maiúsculas, números, ponto ou hífen (2 a 40 caracteres)."
+  },
+  "documents": {
+    "types": {
+      "MANUAL": "Manual",
+      "POLICY": "Política",
+      "SOP": "Procedimento (POP)",
+      "INSTRUCTION": "Instrução de trabalho",
+      "SPECIFICATION": "Especificação",
+      "FORM": "Formulário / registro",
+      "PLAN": "Plano / programa",
+      "OTHER": "Outro"
+    },
+    "versionStatus": {
+      "DRAFT": "Rascunho",
+      "IN_REVIEW": "Em revisão",
+      "PENDING_APPROVAL": "Aguardando aprovação",
+      "APPROVED": "Aprovado (aguardando vigência)",
+      "EFFECTIVE": "Vigente",
+      "SUPERSEDED": "Substituído",
+      "OBSOLETE": "Obsoleto",
+      "CANCELLED": "Cancelado"
+    },
+    "meanings": {
+      "AUTHORED": "Elaborou",
+      "REVIEWED": "Revisou",
+      "APPROVED": "Aprovou",
+      "REJECTED": "Rejeitou",
+      "READ": "Lido e compreendido",
+      "OBSOLETED": "Declarou obsoleto"
+    },
+    "list": {
+      "new": "Novo documento",
+      "empty": "Não há documentos para os filtros selecionados.",
+      "code": "Código",
+      "title": "Título",
+      "type": "Tipo",
+      "process": "Processo",
+      "owner": "Responsável",
+      "version": "Versão",
+      "status": "Status",
+      "effectiveDate": "Vigente desde",
+      "nextReview": "Próxima revisão",
+      "inProgress": "Em andamento: v{version} · {status}",
+      "search": "Pesquisar por código ou título",
+      "allTypes": "Todos os tipos",
+      "allProcesses": "Todos os processos",
+      "allStandards": "Todas as normas",
+      "showObsolete": "Incluir obsoletos",
+      "overdue": "Revisão vencida",
+      "count": "{count, plural, one {# documento} other {# documentos}}",
+      "noVersion": "Sem versão vigente"
+    },
+    "form": {
+      "code": "Código",
+      "codeHelp": "Ex.: POP-MET-001. Maiúsculas, números, ponto ou hífen. Não pode ser alterado.",
+      "title": "Título",
+      "type": "Tipo de documento",
+      "process": "Processo",
+      "owner": "Responsável pelo documento",
+      "standards": "Normas aplicáveis",
+      "reviewPeriod": "Período de revisão (meses)",
+      "changeSummary": "Descrição / motivo",
+      "create": "Criar documento"
+    },
+    "detail": {
+      "info": "Dados do documento",
+      "currentVersion": "Versão vigente",
+      "noCurrent": "Ainda não há versão vigente.",
+      "inProgress": "Versão em andamento",
+      "history": "Histórico de versões",
+      "signatures": "Assinaturas eletrônicas",
+      "download": "Baixar",
+      "newVersion": "Nova versão",
+      "newVersionTitle": "Criar nova versão",
+      "newVersionHelp": "Descreva o que muda e por quê. A versão vigente continua em uso até a nova entrar em vigor.",
+      "obsolete": "Declarar obsoleto",
+      "obsoleteHelp": "O documento deixará de estar vigente. Requer sua assinatura como aprovador.",
+      "reason": "Motivo",
+      "readProgress": "Leituras confirmadas: {done} de {total}",
+      "rejected": "Devolvido com observações",
+      "author": "Elaborou",
+      "reviewer": "Revisor",
+      "approver": "Aprovador",
+      "stepDraft": "Rascunho",
+      "stepReview": "Revisão",
+      "stepApproval": "Aprovação",
+      "stepEffective": "Vigência",
+      "integrityOk": "Assinatura íntegra",
+      "integrityFail": "Assinatura alterada",
+      "fingerprint": "Impressão SHA-256",
+      "uncontrolled": "A cópia controlada é a que está no sistema. Toda cópia impressa ou baixada é uma CÓPIA NÃO CONTROLADA.",
+      "standards": "Normas",
+      "reviewPeriodValue": "{months, plural, one {# mês} other {# meses}}",
+      "obsoleteSince": "Obsoleto desde {date}",
+      "file": "Arquivo",
+      "noFile": "Sem arquivo",
+      "changeSummary": "Alteração",
+      "waiting": "Aguardando ação de {name}.",
+      "plannedEffective": "Vigência prevista: {date}"
+    },
+    "upload": {
+      "title": "Arquivo do documento",
+      "help": "PDF, DOCX, XLSX, DOC ou XLS. Máximo de 20 MB.",
+      "submit": "Enviar arquivo",
+      "uploading": "Enviando…",
+      "uploaded": "Arquivo carregado"
+    },
+    "submit": {
+      "title": "Enviar para revisão",
+      "reviewer": "Revisor",
+      "approver": "Aprovador",
+      "approverHelp": "Somente usuários com permissão para aprovar documentos.",
+      "readers": "Leitura obrigatória ao entrar em vigor",
+      "readersHelp": "Cada pessoa marcada deverá confirmar com sua assinatura que leu a versão.",
+      "selectAll": "Selecionar todos",
+      "effectiveDate": "Data de entrada em vigor",
+      "submit": "Assinar e enviar para revisão",
+      "choose": "Selecione…"
+    },
+    "decision": {
+      "reviewTitle": "Sua revisão",
+      "approvalTitle": "Sua aprovação",
+      "approveReview": "Assinar como revisado",
+      "approveApproval": "Assinar como aprovado",
+      "reject": "Rejeitar e devolver ao autor",
+      "comment": "Comentário",
+      "commentHelp": "Obrigatório ao rejeitar (mínimo de 5 caracteres)."
+    },
+    "signature": {
+      "password": "Senha para assinar",
+      "statement": "Ao assinar declaro que esta assinatura eletrônica, feita com minha senha pessoal, equivale à minha assinatura manuscrita. Significado: «{meaning}»."
+    },
+    "read": {
+      "title": "Leitura obrigatória pendente",
+      "text": "Confirme com sua assinatura que leu e compreendeu a versão vigente.",
+      "submit": "Assinar leitura",
+      "done": "Leitura confirmada"
+    },
+    "cancel": {
+      "title": "Cancelar rascunho",
+      "help": "O rascunho não é excluído: fica cancelado com seu motivo.",
+      "submit": "Cancelar rascunho"
+    },
+    "inbox": {
+      "title": "Caixa de revisão",
+      "subtitle": "Documentos que aguardam uma ação sua.",
+      "toReview": "Para revisar",
+      "toApprove": "Para aprovar",
+      "drafts": "Meus rascunhos",
+      "reads": "Leituras pendentes",
+      "dueReview": "Revisão periódica próxima ou vencida",
+      "empty": "Nada pendente.",
+      "due": "Vence {date}",
+      "open": "Abrir"
+    },
+    "signaturesPage": {
+      "title": "Minhas assinaturas eletrônicas",
+      "subtitle": "Registro de todas as suas assinaturas, com seu significado e a impressão do conteúdo assinado.",
+      "empty": "Você ainda não assinou nenhum registro.",
+      "date": "Data e hora",
+      "meaning": "Significado",
+      "record": "Registro",
+      "comment": "Comentário"
+    }
   }
 }

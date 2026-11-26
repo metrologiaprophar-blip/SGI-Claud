@@ -69,6 +69,9 @@ src/
     public/              # lógica pública sin sesión (solicitud de clave)
     auth/password.ts     # hash, verificación, política, historial
     audit.ts             # logAudit({ action, entity, before, after, reason })
+    signatures.ts        # verifySigner() + recordSignature(): firma electrónica reutilizable
+    permissions.ts       # requirePermission(ctx, "DOC_MANAGE" | "DOC_APPROVE") (lee la BD)
+    storage.ts           # archivos en STORAGE_DIR: validación de tipo real, SHA-256, rutas seguras
     rate-limit.ts
   lib/                   # utilidades puras
 tests/
@@ -100,7 +103,8 @@ eligen el esquema según esa variable; **solo se edita a mano `prisma/schema.pri
 Antes de dar una tarea por terminada: `npm run lint && npm run typecheck && npm test` y, si cambia la
 interfaz o la autenticación, `npm run test:e2e`.
 
-Las bases de pruebas (`test.db`, `e2e.db`) se recrean solas en cada ejecución. Prisma bloquea
+Las bases de pruebas (`test.db`, `e2e.db`) y sus carpetas de archivos (`storage-test/`, `storage-e2e/`) se
+recrean solas en cada ejecución. Prisma bloquea
 `db push --force-reset` lanzado por agentes: no forzarlo; para limpiar la BD de desarrollo, que lo haga
 una persona (`rm prisma/generated/sqlite/dev.db && npm run db:setup`).
 
@@ -147,6 +151,15 @@ una persona (`rm prisma/generated/sqlite/dev.db && npm run db:setup`).
    interpreta como anidación).
 8. **Esquema compatible SQLite/PostgreSQL**: sin `@db.*`, sin arrays escalares. Enums y `Json` sí.
 9. **Service worker**: nunca cachear `/api/**` ni páginas autenticadas.
+10. **Firma electrónica**: toda firma GMP usa `verifySigner()` (fuera de la transacción) y
+    `recordSignature(ctx, tx, …)` (dentro de la transacción del cambio que firma), con un significado de
+    `SignatureMeaning` y el SHA-256 del contenido firmado. `ElectronicSignature` es de solo inserción.
+11. **Permisos GMP**: se comprueban con `requirePermission()`/`hasPermission()`, que leen la BD en cada
+    acción (una revocación tiene efecto inmediato). Ningún rol los concede implícitamente.
+12. **Archivos**: solo a través de `src/server/storage.ts` y descargas por `/api/files/...` con
+    comprobación de empresa, permisos, SHA-256 y auditoría. Nunca servir `STORAGE_DIR` como estático.
+13. **Referencias entre registros** (revisor, proceso, lectores…): validarlas con el cliente de la empresa
+    antes de guardarlas; un id de otra empresa debe resultar en `not_found`/`invalid_user`.
 
 ## Convenciones de código
 
@@ -172,7 +185,11 @@ resuelve su propia solicitud de clave ni cambia su propio rol/estado.
 | `PLATFORM` | `superadmin` | SUPER_ADMIN | `SEED_SUPERADMIN_PASSWORD` o `ChangeMe!2026` |
 | `PROPHAR` | `admin` | ADMIN_EMPRESA | `SEED_ADMIN_PASSWORD` o `ChangeMe!2026` |
 | `PROPHAR` | `metrologia` | USUARIO | igual que el admin |
+| `PROPHAR` | `calidad` | USUARIO | igual que el admin |
 | `OTRA` | `admin` | ADMIN_EMPRESA | igual (solo para pruebas de aislamiento) |
+
+Permisos GMP del seed: `admin` → `DOC_MANAGE` + `DOC_APPROVE`; `metrologia` → `DOC_MANAGE`.
+Circuito de ejemplo: metrología elabora, calidad revisa y admin aprueba.
 
 Solo para desarrollo: el seed se niega a ejecutarse en producción sin las variables definidas, y los
 usuarios sembrados deben cambiar la clave en el primer acceso salvo con `SEED_FORCE_PASSWORD_CHANGE=false`

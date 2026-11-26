@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Icon, type IconKey } from "@/components/ui/icon";
 import { areaHref, CURRENT_PHASE, toolHref, visibleAreas } from "@/config/navigation";
 import { countPendingResetRequests } from "@/features/reset-requests/service";
+import { countInbox } from "@/features/documents/service";
 import { isAdmin, requireSession } from "@/server/auth/guards";
 import { getTenantDb } from "@/server/db/tenant";
 
@@ -26,7 +27,7 @@ export default async function HomePage({
   const format = await getFormatter();
   const admin = isAdmin(session.user.role);
 
-  const [activeUsers, pending, me] = await Promise.all([
+  const [activeUsers, pending, me, docInbox] = await Promise.all([
     db.user.count({ where: { status: "ACTIVE" } }),
     admin ? countPendingResetRequests(db, session.user.id) : Promise.resolve(0),
     db.auditLog.findMany({
@@ -35,10 +36,17 @@ export default async function HomePage({
       take: 2,
       select: { createdAt: true },
     }),
+    countInbox(db, session.user.id),
   ]);
   const previousLogin = me[1]?.createdAt;
 
   const stats: { label: string; value: string; icon: IconKey; href?: string }[] = [
+    {
+      label: t("home.docInbox"),
+      value: String(docInbox),
+      icon: "docs",
+      href: "/documentos/bandeja-revision",
+    },
     { label: t("home.yourRole"), value: t(`roles.${session.user.role}`), icon: "user" },
     {
       label: t("home.lastLogin"),
@@ -78,7 +86,7 @@ export default async function HomePage({
 
       {clave === "actualizada" && <Alert tone="success">{t("home.passwordUpdated")}</Alert>}
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {stats.map((s) => {
           const body = (
             <Card className="flex h-full items-center gap-4 p-5 transition-shadow hover:shadow-md">

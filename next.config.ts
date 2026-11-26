@@ -13,6 +13,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  experimental: {
+    // Subida de documentos controlados (máx. 20 MB por archivo + margen del formulario).
+    serverActions: { bodySizeLimit: "25mb" },
+    proxyClientMaxBodySize: "25mb",
+  },
   serverExternalPackages: ["@prisma/client", "bcryptjs"],
   async headers() {
     return [

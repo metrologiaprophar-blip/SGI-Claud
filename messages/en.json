@@ -276,7 +276,8 @@
     "yourRole": "Your role",
     "areasTitle": "System areas",
     "phaseNotice": "Phase 1: platform core. GMP modules will be enabled in phases.",
-    "toolsAvailable": "{count, plural, =0 {Coming soon} one {# tool available} other {# tools available}}"
+    "toolsAvailable": "{count, plural, =0 {Coming soon} one {# tool available} other {# tools available}}",
+    "docInbox": "Document tasks"
   },
   "admin": {
     "users": {
@@ -299,7 +300,12 @@
       "unlock": "Unlock",
       "editTitle": "Edit user",
       "you": "You",
-      "empty": "There are no users."
+      "empty": "There are no users.",
+      "permissions": "GMP permissions",
+      "perm": {
+        "DOC_MANAGE": "Document control: create documents and new versions",
+        "DOC_APPROVE": "Approve documents and declare them obsolete"
+      }
     },
     "resets": {
       "title": "Password requests",
@@ -382,13 +388,44 @@
     },
     "organization": {
       "update": "Company details modified"
+    },
+    "document": {
+      "create": "Document created",
+      "submit": "Sent for review",
+      "review": "Document reviewed",
+      "review_reject": "Rejected in review",
+      "approve": "Document approved",
+      "approve_reject": "Rejected in approval",
+      "effective": "Became effective",
+      "supersede": "Version superseded",
+      "obsolete": "Document declared obsolete",
+      "download": "Document downloaded",
+      "version": {
+        "create": "New version",
+        "cancel": "Draft cancelled"
+      },
+      "file": {
+        "upload": "File uploaded",
+        "integrity_error": "File integrity error"
+      }
+    },
+    "signature": {
+      "authored": "Signature: authored",
+      "reviewed": "Signature: reviewed",
+      "approved": "Signature: approved",
+      "rejected": "Signature: rejected",
+      "read": "Signature: read",
+      "obsoleted": "Signature: obsolete",
+      "failed": "Failed signature (password)"
     }
   },
   "auditGroups": {
     "auth": "Authentication",
     "user": "Users",
     "password_reset": "Password requests",
-    "organization": "Company"
+    "organization": "Company",
+    "document": "Documents",
+    "signature": "Electronic signatures"
   },
   "errors": {
     "unexpected": "An unexpected error occurred. Please try again.",
@@ -408,7 +445,27 @@
     "password_too_long": "The password is too long (maximum 64 characters).",
     "password_needs_letter_and_digit": "The password must include letters and numbers.",
     "password_contains_username": "The password cannot contain your username.",
-    "password_reused": "You cannot reuse your current password or the previous 5."
+    "password_reused": "You cannot reuse your current password or the previous 5.",
+    "invalid_document_code": "Invalid code: use uppercase letters, numbers, dot or hyphen (2 to 40 characters).",
+    "document_code_taken": "A document with that code already exists.",
+    "invalid_user": "One of the selected users is invalid or inactive.",
+    "change_summary_required": "Describe the change (at least 5 characters).",
+    "document_obsolete": "The document is obsolete.",
+    "version_in_progress": "There is already a version in progress for this document.",
+    "version_not_editable": "This version can no longer be modified.",
+    "file_required": "You must attach the document file.",
+    "file_too_large": "The file exceeds 20 MB.",
+    "file_type_not_allowed": "Format not allowed or damaged file. Use PDF, DOCX, XLSX, DOC or XLS.",
+    "segregation_of_duties": "The author, reviewer and approver must be three different people.",
+    "approver_without_permission": "The selected approver is not allowed to approve documents.",
+    "invalid_effective_date": "The effective date cannot be earlier than today.",
+    "signature_password_invalid": "Incorrect password. The signature was not recorded.",
+    "version_not_in_review": "The version is not in review.",
+    "version_not_pending_approval": "The version is not pending approval.",
+    "version_state_changed": "The version changed status while you were signing. Reload the page.",
+    "already_acknowledged": "You already confirmed reading this version.",
+    "version_not_effective": "The version is not effective.",
+    "file_integrity_error": "The file does not match its recorded fingerprint. Notify Quality Assurance."
   },
   "fieldErrors": {
     "required": "Required.",
@@ -421,6 +478,171 @@
     "reason_required": "State the reason (at least 3 characters).",
     "invalid_timezone": "Invalid time zone.",
     "invalid": "Invalid value.",
-    "invalid_ruc": "Invalid RUC: it must have 13 digits and end in 001."
+    "invalid_ruc": "Invalid RUC: it must have 13 digits and end in 001.",
+    "invalid_document_code": "Uppercase letters, numbers, dot or hyphen (2 to 40 characters)."
+  },
+  "documents": {
+    "types": {
+      "MANUAL": "Manual",
+      "POLICY": "Policy",
+      "SOP": "Procedure (SOP)",
+      "INSTRUCTION": "Work instruction",
+      "SPECIFICATION": "Specification",
+      "FORM": "Form / record",
+      "PLAN": "Plan / program",
+      "OTHER": "Other"
+    },
+    "versionStatus": {
+      "DRAFT": "Draft",
+      "IN_REVIEW": "In review",
+      "PENDING_APPROVAL": "Pending approval",
+      "APPROVED": "Approved (not yet effective)",
+      "EFFECTIVE": "Effective",
+      "SUPERSEDED": "Superseded",
+      "OBSOLETE": "Obsolete",
+      "CANCELLED": "Cancelled"
+    },
+    "meanings": {
+      "AUTHORED": "Authored",
+      "REVIEWED": "Reviewed",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "READ": "Read and understood",
+      "OBSOLETED": "Declared obsolete"
+    },
+    "list": {
+      "new": "New document",
+      "empty": "No documents match the selected filters.",
+      "code": "Code",
+      "title": "Title",
+      "type": "Type",
+      "process": "Process",
+      "owner": "Owner",
+      "version": "Version",
+      "status": "Status",
+      "effectiveDate": "Effective since",
+      "nextReview": "Next review",
+      "inProgress": "In progress: v{version} · {status}",
+      "search": "Search by code or title",
+      "allTypes": "All types",
+      "allProcesses": "All processes",
+      "allStandards": "All standards",
+      "showObsolete": "Include obsolete",
+      "overdue": "Review overdue",
+      "count": "{count, plural, one {# document} other {# documents}}",
+      "noVersion": "No effective version"
+    },
+    "form": {
+      "code": "Code",
+      "codeHelp": "E.g.: SOP-MET-001. Uppercase letters, numbers, dot or hyphen. Cannot be changed.",
+      "title": "Title",
+      "type": "Document type",
+      "process": "Process",
+      "owner": "Document owner",
+      "standards": "Applicable standards",
+      "reviewPeriod": "Review period (months)",
+      "changeSummary": "Description / reason",
+      "create": "Create document"
+    },
+    "detail": {
+      "info": "Document details",
+      "currentVersion": "Effective version",
+      "noCurrent": "There is no effective version yet.",
+      "inProgress": "Version in progress",
+      "history": "Version history",
+      "signatures": "Electronic signatures",
+      "download": "Download",
+      "newVersion": "New version",
+      "newVersionTitle": "Create new version",
+      "newVersionHelp": "Describe what changes and why. The effective version stays in use until the new one becomes effective.",
+      "obsolete": "Declare obsolete",
+      "obsoleteHelp": "The document will no longer be effective. Requires your signature as approver.",
+      "reason": "Reason",
+      "readProgress": "Confirmed reads: {done} of {total}",
+      "rejected": "Returned with comments",
+      "author": "Authored by",
+      "reviewer": "Reviewer",
+      "approver": "Approver",
+      "stepDraft": "Draft",
+      "stepReview": "Review",
+      "stepApproval": "Approval",
+      "stepEffective": "Effective",
+      "integrityOk": "Signature intact",
+      "integrityFail": "Signature altered",
+      "fingerprint": "SHA-256 fingerprint",
+      "uncontrolled": "The controlled copy is the one in the system. Any printed or downloaded copy is an UNCONTROLLED COPY.",
+      "standards": "Standards",
+      "reviewPeriodValue": "{months, plural, one {# month} other {# months}}",
+      "obsoleteSince": "Obsolete since {date}",
+      "file": "File",
+      "noFile": "No file",
+      "changeSummary": "Change",
+      "waiting": "Waiting for {name}.",
+      "plannedEffective": "Planned effective date: {date}"
+    },
+    "upload": {
+      "title": "Document file",
+      "help": "PDF, DOCX, XLSX, DOC or XLS. Maximum 20 MB.",
+      "submit": "Upload file",
+      "uploading": "Uploading…",
+      "uploaded": "File uploaded"
+    },
+    "submit": {
+      "title": "Send for review",
+      "reviewer": "Reviewer",
+      "approver": "Approver",
+      "approverHelp": "Only users allowed to approve documents.",
+      "readers": "Required reading when effective",
+      "readersHelp": "Each selected person must confirm with their signature that they read the version.",
+      "selectAll": "Select all",
+      "effectiveDate": "Effective date",
+      "submit": "Sign and send for review",
+      "choose": "Select…"
+    },
+    "decision": {
+      "reviewTitle": "Your review",
+      "approvalTitle": "Your approval",
+      "approveReview": "Sign as reviewed",
+      "approveApproval": "Sign as approved",
+      "reject": "Reject and return to author",
+      "comment": "Comment",
+      "commentHelp": "Required when rejecting (at least 5 characters)."
+    },
+    "signature": {
+      "password": "Password to sign",
+      "statement": "By signing I declare that this electronic signature, made with my personal password, is equivalent to my handwritten signature. Meaning: “{meaning}”."
+    },
+    "read": {
+      "title": "Required reading pending",
+      "text": "Confirm with your signature that you read and understood the effective version.",
+      "submit": "Sign reading",
+      "done": "Reading confirmed"
+    },
+    "cancel": {
+      "title": "Cancel draft",
+      "help": "The draft is not deleted: it stays cancelled with its reason.",
+      "submit": "Cancel draft"
+    },
+    "inbox": {
+      "title": "Review inbox",
+      "subtitle": "Documents waiting for your action.",
+      "toReview": "To review",
+      "toApprove": "To approve",
+      "drafts": "My drafts",
+      "reads": "Pending reads",
+      "dueReview": "Periodic review due or overdue",
+      "empty": "Nothing pending.",
+      "due": "Due {date}",
+      "open": "Open"
+    },
+    "signaturesPage": {
+      "title": "My electronic signatures",
+      "subtitle": "Record of all your signatures, with their meaning and the fingerprint of the signed content.",
+      "empty": "You have not signed any record yet.",
+      "date": "Date and time",
+      "meaning": "Meaning",
+      "record": "Record",
+      "comment": "Comment"
+    }
   }
 }

@@ -1,7 +1,19 @@
 import type { PrismaClient } from "@prisma/client";
 
 /** Modelos de negocio con columna organizationId. Todo modelo nuevo con organizationId se añade aquí. */
-export const TENANT_MODELS = new Set(["User", "PasswordResetRequest", "AuditLog"]);
+export const TENANT_MODELS = new Set([
+  "User",
+  "PasswordResetRequest",
+  "AuditLog",
+  "Process",
+  "Document",
+  "DocumentVersion",
+  "ElectronicSignature",
+  "ReadAcknowledgement",
+]);
+
+/** Modelos de solo inserción (integridad de datos GMP). */
+const APPEND_ONLY_MODELS = new Set(["AuditLog", "ElectronicSignature"]);
 
 type Args = Record<string, unknown>;
 
@@ -83,8 +95,8 @@ export function createTenantClient(base: PrismaClient, organizationId: string) {
               `el modelo ${model} no está registrado en TENANT_MODELS`,
             );
           }
-          if (model === "AuditLog" && /^(update|upsert|delete)/.test(operation)) {
-            throw new Error("AuditLog es de solo inserción");
+          if (APPEND_ONLY_MODELS.has(model) && /^(update|upsert|delete)/.test(operation)) {
+            throw new Error(`${model} es de solo inserción`);
           }
 
           switch (operation) {

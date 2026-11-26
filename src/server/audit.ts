@@ -69,7 +69,9 @@ export function diff<T extends Record<string, unknown>>(before: T, after: Partia
     const same =
       prev instanceof Date && next instanceof Date
         ? prev.getTime() === next.getTime()
-        : prev === next;
+        : typeof prev === "object" || typeof next === "object"
+          ? JSON.stringify(prev ?? null) === JSON.stringify(next ?? null)
+          : prev === next;
     if (!same) {
       b[key] = prev;
       a[key] = next;

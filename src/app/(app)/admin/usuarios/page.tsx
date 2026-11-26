@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/card";
 import { CreateUserButton } from "@/features/users/components/create-user-button";
 import { UsersTable } from "@/features/users/components/users-table";
 import { listUsers } from "@/features/users/service";
+import { parsePermissions } from "@/lib/permissions";
 import { requireRole } from "@/server/auth/guards";
 import { getTenantDb } from "@/server/db/tenant";
 
@@ -22,6 +23,7 @@ export default async function UsersPage() {
       <UsersTable
         users={users.map((u) => ({
           ...u,
+          permissions: parsePermissions(u.permissions),
           lockedUntil:
             u.lockedUntil && u.lockedUntil > new Date() ? u.lockedUntil.toISOString() : null,
           lastLoginAt: u.lastLoginAt?.toISOString() ?? null,

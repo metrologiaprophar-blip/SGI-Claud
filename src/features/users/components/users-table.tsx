@@ -12,6 +12,7 @@ import { Modal } from "@/components/ui/modal";
 import { TemporaryPassword } from "@/components/ui/temporary-password";
 import { useActionMessages } from "@/lib/use-action-messages";
 import { submitWithoutReset } from "@/lib/use-form-submit";
+import { PERMISSIONS, type Permission } from "@/lib/permissions";
 import { resetUserPasswordAction, unlockUserAction, updateUserAction } from "../actions";
 
 export type UserRowView = {
@@ -23,6 +24,7 @@ export type UserRowView = {
   role: Role;
   status: Status;
   mustChangePassword: boolean;
+  permissions: Permission[];
   lockedUntil: string | null;
   lastLoginAt: string | null;
   createdAt: string;
@@ -121,6 +123,25 @@ function EditUserForm({
           </Select>
         </Field>
       </div>
+      <fieldset>
+        <legend className="mb-1.5 text-sm font-medium text-slate-700">
+          {t("admin.users.permissions")}
+        </legend>
+        <div className="space-y-1.5">
+          {PERMISSIONS.map((perm) => (
+            <label key={perm} className="flex items-start gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                name="permissions"
+                value={perm}
+                defaultChecked={user.permissions.includes(perm)}
+                className="accent-brand-700 mt-0.5"
+              />
+              {t(`admin.users.perm.${perm}`)}
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <Field
         id="eu-reason"
         label={t("common.reason")}
@@ -217,7 +238,18 @@ export function UsersTable({
                       </p>
                     </td>
                     <td className="px-4 py-3 font-mono text-slate-700">{u.username}</td>
-                    <td className="px-4 py-3">{t(`roles.${u.role}`)}</td>
+                    <td className="px-4 py-3">
+                      {t(`roles.${u.role}`)}
+                      {u.permissions.length > 0 && (
+                        <span className="mt-1 flex flex-wrap gap-1">
+                          {u.permissions.map((p) => (
+                            <Badge key={p} tone="brand">
+                              {p}
+                            </Badge>
+                          ))}
+                        </span>
+                      )}
+                    </td>
                     <td className="space-x-1 px-4 py-3 whitespace-nowrap">
                       <Badge tone={u.status === "ACTIVE" ? "success" : "danger"}>
                         {t(`status.${u.status}`)}

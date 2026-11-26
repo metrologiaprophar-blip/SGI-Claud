@@ -10,6 +10,7 @@ export default function setup() {
   const gen = spawnSync("node", ["scripts/prisma-schema.mjs"], { env, stdio: "inherit" });
   if (gen.status !== 0) throw new Error("No se pudo generar el esquema SQLite");
   for (const suffix of ["", "-journal"]) rmSync(`${TEST_DB_FILE}${suffix}`, { force: true });
+  rmSync("storage-test", { recursive: true, force: true }); // archivos subidos por las pruebas
   const push = spawnSync(
     "npx",
     [

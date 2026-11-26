@@ -18,6 +18,7 @@ export default defineConfig({
     env: {
       DATABASE_PROVIDER: "sqlite",
       DATABASE_URL: "file:./e2e.db",
+      STORAGE_DIR: "storage-e2e",
       SEED_FORCE_PASSWORD_CHANGE: "false",
     },
   },

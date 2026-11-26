@@ -6,7 +6,13 @@ Plataforma web para el Sistema de Gestión Integrado de PROPHAR: BPM/GMP farmac�
 - Requisitos del producto: [`PRD.md`](PRD.md)
 - Arquitectura, convenciones y comandos: [`CLAUDE.md`](CLAUDE.md)
 
-## Estado: Fase 1 (núcleo)
+## Estado
+
+**Fase 2 (control documental GMP) completada:** listado maestro y listas por tipo, versiones,
+revisión y aprobación con firma electrónica, lectura obligatoria, bandeja de revisión, mis firmas y
+descargas protegidas con verificación SHA-256. Detalle en `PRD.md §13`.
+
+### Fase 1 (núcleo)
 
 - Portal de acceso en dos columnas (ID corporativo + usuario + contraseña), con indicadores de seguridad.
 - Español, inglés y portugués.
@@ -51,6 +57,9 @@ Abre http://localhost:3000 e ingresa con:
 |---|---|---|
 | `PROPHAR` | `admin` | `ChangeMe!2026` |
 | `PROPHAR` | `metrologia` | `ChangeMe!2026` |
+| `PROPHAR` | `calidad` | `ChangeMe!2026` |
+
+Para probar el circuito documental: `metrologia` elabora un documento, `calidad` lo revisa y `admin` lo aprueba.
 
 En el primer acceso el sistema pide cambiar la contraseña. Para definir otras claves iniciales, usa
 `SEED_ADMIN_PASSWORD` y `SEED_SUPERADMIN_PASSWORD` en `.env` antes de `npm run db:setup`.
@@ -97,6 +106,7 @@ y aprobación de clave, el cambio obligatorio y la gestión de usuarios (`e2e.db
 ## Producción (resumen)
 
 1. PostgreSQL gestionado con copias de seguridad diarias.
-2. Variables: `DATABASE_PROVIDER=postgresql`, `DATABASE_URL`, `AUTH_SECRET`, `SEED_*_PASSWORD`.
+2. Variables: `DATABASE_PROVIDER=postgresql`, `DATABASE_URL`, `AUTH_SECRET`, `SEED_*_PASSWORD`, `STORAGE_DIR`
+   (carpeta de archivos de documentos: debe respaldarse junto con la base de datos).
 3. `npm ci && npm run build && npm run db:deploy && npm run db:seed && npm start`, siempre detrás de HTTPS.
 4. Si se usará para registros GMP, PROPHAR debe validar el sistema (ver `PRD.md §5`).

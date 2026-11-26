@@ -29,6 +29,45 @@ enum ResetStatus {
   EXPIRED
 }
 
+/// Tipos de documento controlado (PRD §8, área Documentos).
+enum DocumentType {
+  MANUAL
+  POLICY
+  SOP
+  INSTRUCTION
+  SPECIFICATION
+  FORM
+  PLAN
+  OTHER
+}
+
+enum DocumentStatus {
+  ACTIVE
+  OBSOLETE
+}
+
+/// Ciclo de vida de una versión: DRAFT → IN_REVIEW → PENDING_APPROVAL → APPROVED/EFFECTIVE → SUPERSEDED/OBSOLETE.
+enum VersionStatus {
+  DRAFT
+  IN_REVIEW
+  PENDING_APPROVAL
+  APPROVED
+  EFFECTIVE
+  SUPERSEDED
+  OBSOLETE
+  CANCELLED
+}
+
+/// Significado de una firma electrónica (21 CFR 11.50 / EU GMP Anexo 11).
+enum SignatureMeaning {
+  AUTHORED
+  REVIEWED
+  APPROVED
+  REJECTED
+  READ
+  OBSOLETED
+}
+
 /// Empresa (tenant). `code` es el "ID corporativo" del login.
 model Organization {
   id                 String   @id @default(cuid())
@@ -47,6 +86,8 @@ model Organization {
   users         User[]
   resetRequests PasswordResetRequest[]
   auditLogs     AuditLog[]
+  processes     Process[]
+  documents     Document[]
 }
 
 model User {
@@ -59,6 +100,8 @@ model User {
   passwordHash       String
   /// Últimos hashes de contraseña (array JSON de strings) para impedir su reutilización.
   passwordHistory    Json?
+  /// Permisos GMP (array JSON): DOC_MANAGE (control documental), DOC_APPROVE (aprobar documentos).
+  permissions        Json?
   role               Role      @default(USUARIO)
   status             Status    @default(ACTIVE)
   locale             String?
@@ -72,6 +115,11 @@ model User {
 
   organization  Organization           @relation(fields: [organizationId], references: [id])
   resetRequests PasswordResetRequest[]
+
+  ownedDocuments   Document[]        @relation("DocumentOwner")
+  authoredVersions DocumentVersion[] @relation("VersionAuthor")
+  reviewVersions   DocumentVersion[] @relation("VersionReviewer")
+  approveVersions  DocumentVersion[] @relation("VersionApprover")
 
   @@unique([organizationId, username])
   @@index([organizationId])
@@ -117,4 +165,130 @@ model AuditLog {
 
   @@index([organizationId, createdAt])
   @@index([entityType, entityId])
+}
+
+/// Proceso del mapa de procesos (dueño de documentos, auditorías, indicadores…).
+model Process {
+  id             String   @id @default(cuid())
+  organizationId String
+  code           String
+  name           String
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  documents    Document[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId])
+}
+
+/// Documento controlado. Sus contenidos viven en DocumentVersion; nunca se borra (se declara obsoleto).
+model Document {
+  id                 String         @id @default(cuid())
+  organizationId     String
+  code               String
+  title              String
+  type               DocumentType
+  processId          String
+  ownerId            String
+  /// Normas a las que aplica (array JSON de códigos: GMP, BPADT, ISO9001…).
+  standards          Json
+  reviewPeriodMonths Int            @default(24)
+  status             DocumentStatus @default(ACTIVE)
+  obsoletedAt        DateTime?
+  obsoleteReason     String?
+  createdById        String
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  organization Organization      @relation(fields: [organizationId], references: [id])
+  process      Process           @relation(fields: [processId], references: [id])
+  owner        User              @relation("DocumentOwner", fields: [ownerId], references: [id])
+  versions     DocumentVersion[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, type])
+}
+
+/// Versión de un documento. Una vez enviada a revisión su contenido no cambia.
+model DocumentVersion {
+  id             String        @id @default(cuid())
+  organizationId String
+  documentId     String
+  version        Int
+  status         VersionStatus @default(DRAFT)
+  changeSummary  String
+  authorId       String
+  reviewerId     String?
+  approverId     String?
+  /// Usuarios con lectura obligatoria al entrar en vigencia (array JSON de ids).
+  readerIds      Json?
+  effectiveDate  DateTime?
+  nextReviewDate DateTime?
+  fileName       String?
+  fileMime       String?
+  fileSize       Int?
+  fileSha256     String?
+  storageKey     String?
+  lastRejection  String?
+  submittedAt    DateTime?
+  reviewedAt     DateTime?
+  approvedAt     DateTime?
+  effectiveAt    DateTime?
+  supersededAt   DateTime?
+  cancelledAt    DateTime?
+  cancelReason   String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  document Document              @relation(fields: [documentId], references: [id])
+  author   User                  @relation("VersionAuthor", fields: [authorId], references: [id])
+  reviewer User?                 @relation("VersionReviewer", fields: [reviewerId], references: [id])
+  approver User?                 @relation("VersionApprover", fields: [approverId], references: [id])
+  reads    ReadAcknowledgement[]
+
+  @@unique([documentId, version])
+  @@index([organizationId, status])
+  @@index([reviewerId, status])
+  @@index([approverId, status])
+}
+
+/// Firma electrónica. Solo inserción: vincula usuario, significado, fecha y hash del contenido firmado.
+model ElectronicSignature {
+  id             String           @id @default(cuid())
+  organizationId String
+  userId         String
+  userFullName   String
+  userJobTitle   String?
+  meaning        SignatureMeaning
+  entityType     String
+  entityId       String
+  /// SHA-256 del archivo firmado.
+  contentHash    String?
+  /// SHA-256 del manifiesto de firma (usuario, significado, fecha, registro y contenido).
+  signatureHash  String
+  comment        String?
+  ip             String?
+  signedAt       DateTime         @default(now())
+
+  @@index([organizationId, userId])
+  @@index([entityType, entityId])
+}
+
+/// Lectura obligatoria de una versión vigente (formación en el documento).
+model ReadAcknowledgement {
+  id             String    @id @default(cuid())
+  organizationId String
+  versionId      String
+  userId         String
+  dueDate        DateTime?
+  acknowledgedAt DateTime?
+  signatureId    String?
+  createdAt      DateTime  @default(now())
+
+  version DocumentVersion @relation(fields: [versionId], references: [id])
+
+  @@unique([versionId, userId])
+  @@index([organizationId, userId])
 }

@@ -10,10 +10,28 @@ function createClient() {
   const client = new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
   });
-  // Integridad de datos GMP: el registro de auditoría es de solo inserción.
+  // Integridad de datos GMP: el registro de auditoría y las firmas electrónicas son de solo inserción.
+  const appendOnly = (model: string) => ({
+    update: () => {
+      throw new Error(`${model} es de solo inserción`);
+    },
+    updateMany: () => {
+      throw new Error(`${model} es de solo inserción`);
+    },
+    upsert: () => {
+      throw new Error(`${model} es de solo inserción`);
+    },
+    delete: () => {
+      throw new Error(`${model} es de solo inserción`);
+    },
+    deleteMany: () => {
+      throw new Error(`${model} es de solo inserción`);
+    },
+  });
   return client.$extends({
-    name: "audit-log-append-only",
+    name: "append-only",
     query: {
+      electronicSignature: appendOnly("ElectronicSignature"),
       auditLog: {
         update: () => {
           throw new Error("AuditLog es de solo inserción");

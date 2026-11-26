@@ -60,7 +60,7 @@ La arquitectura es multiempresa (SaaS), aunque el primer y principal cliente es 
 | Fase | Contenido |
 |---|---|
 | **F1 — Núcleo** | Portal de acceso, autenticación, multiempresa, roles, registro de auditoría preparado para GMP, restablecimiento de clave por aprobación, barra superior por áreas, inicio, administración de usuarios, PWA, ES/EN/PT. **(Este plan)** |
-| F2 — Documentos GMP | Listado maestro, POE/SOP, especificaciones, registros; versiones; revisión y aprobación con **firma electrónica**; distribución, lectura obligatoria y copias controladas. |
+| F2 — Documentos GMP ✅ | Listado maestro, POE/SOP, especificaciones, registros; versiones; revisión y aprobación con **firma electrónica**; lectura obligatoria; aviso de copia no controlada. Detalle en §13. |
 | F3 — Calidad GMP | **Desviaciones**, **CAPA**, **Control de cambios**, con evaluación de riesgo e impacto. |
 | F4 — Metrología y laboratorio | Inventario de equipos e instrumentos, plan y certificados de **calibración**, verificaciones intermedias, **calificación IQ/OQ/PQ**, mantenimiento, equipos fuera de servicio y evaluación de impacto. **ISO/IEC 17025**: patrones y materiales de referencia con trazabilidad, estimación de incertidumbre, validación/verificación de métodos, ensayos de aptitud e interlaboratorios, informes y certificados. |
 | F5 — Almacén y distribución (BPADT) | Áreas y ubicaciones, **monitoreo de temperatura y humedad**, mapeo térmico, **excursiones**, recepción y cuarentena, despacho y transporte, cadena de frío, devoluciones, productos sospechosos/falsificados, **retiros de mercado y simulacros**. |
@@ -357,7 +357,39 @@ Respuesta de las acciones: `{ ok: true, data } | { ok: false, error: { code, mes
 6. Login correcto/fallido, bloqueo, solicitudes y su resolución, y altas/cambios de usuarios quedan en el registro de auditoría con valor anterior y nuevo.
 7. La sesión se cierra tras el tiempo de inactividad configurado.
 
-## 13. Preguntas abiertas
+## 13. Fase 2 — Control documental GMP (implementada)
+
+### Flujo de una versión
+
+| Estado | Quién actúa | Firma | Siguiente estado |
+|---|---|---|---|
+| Borrador | Autor: sube el archivo, elige revisor, aprobador, lectores y fecha de vigencia | **Elaboró** | En revisión |
+| En revisión | Revisor asignado | **Revisó** o **Rechazó** (con comentario) | Pendiente de aprobación / Borrador |
+| Pendiente de aprobación | Aprobador asignado (permiso `DOC_APPROVE`) | **Aprobó** o **Rechazó** | Aprobado / Borrador |
+| Aprobado | Automático en la fecha de vigencia | — | Vigente (la anterior pasa a Sustituida) |
+| Vigente | Lectores asignados (plazo 15 días) | **Leído y comprendido** | — |
+| Obsoleto | Aprobador, con motivo | **Declaró obsoleto** | — |
+
+Un borrador que no sigue adelante se **anula** con motivo; nunca se borra.
+
+### Reglas GMP
+
+- **Segregación de funciones:** autor, revisor y aprobador son tres personas distintas.
+- **Firma electrónica:** se pide la contraseña en cada firma. Se registran nombre, cargo, significado, fecha y hora del servidor, comentario y la huella SHA-256 del archivo. La firma completa se sella con su propio SHA-256, y la ficha del documento comprueba que no se ha alterado. Las firmas son de solo inserción (extensión de Prisma + trigger en PostgreSQL), y una contraseña incorrecta queda registrada en la auditoría.
+- **Integridad del archivo:** se valida el tipo real del archivo (PDF, DOCX, XLSX, DOC, XLS; máx. 20 MB). Cada descarga recalcula el SHA-256, la bloquea si no coincide y queda auditada.
+- **Inmutabilidad:** una vez enviada a revisión, el archivo de la versión no cambia. Cualquier cambio exige una nueva versión con descripción del cambio, y solo puede haber una versión abierta por documento.
+- **Acceso:** la versión vigente es visible para toda la empresa. Borradores y versiones anteriores solo para sus participantes y el control documental (`DOC_MANAGE`).
+- **Revisión periódica:** la próxima revisión es la fecha de vigencia más el periodo del documento (24 meses por defecto). Aparece en la bandeja del responsable 30 días antes y el listado maestro marca las vencidas.
+- **Permisos GMP** (Administración → Usuarios): `DOC_MANAGE` permite crear documentos y versiones; `DOC_APPROVE` permite aprobar y declarar obsoleto. Ningún rol los incluye por defecto: se asignan persona a persona y el cambio queda auditado.
+
+### Pendiente para fases posteriores
+
+- Copias controladas impresas con marca de agua y numeración.
+- Edición de los metadatos del documento (título, proceso, responsable) con motivo.
+- Administración del mapa de procesos desde la aplicación (hoy viene del seed).
+- Almacenamiento de archivos en un servicio de objetos (S3/Azure) para varias instancias.
+
+## 14. Preguntas abiertas
 
 - Orden de las fases F2–F8; propuesta: F2 Documentos → F3 Calidad GMP → F4 Metrología → F5 BPADT.
 - Formato de los dataloggers de temperatura (exportan CSV, API, ninguno).

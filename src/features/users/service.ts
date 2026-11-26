@@ -4,6 +4,7 @@ import { normalizeUsername } from "@/lib/identity";
 import { auditBase, type ServiceContext } from "@/server/context";
 import { diff, logAudit } from "@/server/audit";
 import { generateTemporaryPassword, hashPassword, nextHistory } from "@/server/auth/password";
+import { parsePermissions, type Permission } from "@/lib/permissions";
 import type { TenantDb } from "@/server/db/tenant-client";
 
 export const ASSIGNABLE_ROLES: Role[] = ["ADMIN_EMPRESA", "USUARIO"];
@@ -17,6 +18,7 @@ const publicUserSelect = {
   role: true,
   status: true,
   mustChangePassword: true,
+  permissions: true,
   lockedUntil: true,
   lastLoginAt: true,
   createdAt: true,
@@ -91,6 +93,8 @@ export type UpdateUserInput = {
   jobTitle?: string | null;
   role: Role;
   status: Status;
+  /** Permisos GMP; si se omite, no se modifican. */
+  permissions?: Permission[];
 };
 
 export async function updateUser(
@@ -119,8 +123,12 @@ export async function updateUser(
     jobTitle: input.jobTitle?.trim() || null,
     role: input.role,
     status: input.status,
+    ...(input.permissions ? { permissions: [...new Set(input.permissions)].sort() } : {}),
   };
-  const changes = diff(current, next);
+  const changes = diff(
+    { ...current, permissions: parsePermissions(current.permissions).sort() },
+    next,
+  );
   if (!changes.changed) return current;
 
   return ctx.db.$transaction(async (tx) => {

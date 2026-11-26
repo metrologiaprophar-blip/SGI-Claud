@@ -5,7 +5,7 @@ import type { Role } from "@prisma/client";
  * - `key`: clave i18n bajo `nav.tools.<key>` (título) y `nav.toolDescriptions.<key>`.
  * - `phase`: fase del roadmap; las herramientas con phase > CURRENT_PHASE muestran "Próximamente".
  */
-export const CURRENT_PHASE = 1;
+export const CURRENT_PHASE = 2;
 
 export type NavTool = { key: string; slug: string; phase: number; standards: Standard[] };
 export type NavArea = {
@@ -191,6 +191,8 @@ export function matchPath(pathname: string) {
       const href = toolHref(area, tool);
       if (pathname === href || pathname.startsWith(`${href}/`)) return { area, tool };
     }
+    // Páginas propias del área que no son herramientas del menú (p. ej. /documentos/doc/:id).
+    if (pathname.startsWith(`${base}/`)) return { area, tool: undefined };
   }
   return null;
 }

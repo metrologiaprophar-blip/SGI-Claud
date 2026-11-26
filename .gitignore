@@ -12,3 +12,6 @@ prisma/generated/
 test-results/
 playwright-report/
 .DS_Store
+storage/
+storage-test/
+storage-e2e/

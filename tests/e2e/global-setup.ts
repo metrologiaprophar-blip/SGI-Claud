@@ -11,6 +11,7 @@ export default function globalSetup() {
   };
   for (const suffix of ["", "-journal"])
     rmSync(`prisma/generated/sqlite/e2e.db${suffix}`, { force: true });
+  rmSync("storage-e2e", { recursive: true, force: true });
   const run = (cmd: string, args: string[]) => {
     const r = spawnSync(cmd, args, { env, stdio: "inherit" });
     if (r.status !== 0) throw new Error(`${cmd} ${args.join(" ")} falló`);

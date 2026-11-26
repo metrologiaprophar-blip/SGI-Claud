@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { USERNAME_PATTERN } from "@/lib/identity";
+import { parsePermissions } from "@/lib/permissions";
 import type { ActionResult } from "@/lib/result";
 import { getServiceContext, parseForm, runAction } from "@/server/action";
 import { createUser, resetUserPassword, unlockUser, updateUser } from "./service";
@@ -64,7 +65,8 @@ export async function updateUserAction(
   return runAction(async () => {
     const ctx = await getServiceContext(...ADMIN_ROLES);
     const { id, reason, ...input } = parsed.data;
-    await updateUser(ctx, id, input, reason ?? undefined);
+    const permissions = parsePermissions(formData.getAll("permissions").map(String));
+    await updateUser(ctx, id, { ...input, permissions }, reason ?? undefined);
     revalidatePath("/admin/usuarios");
     return undefined;
   });
