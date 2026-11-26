@@ -278,7 +278,8 @@
     "phaseNotice": "Fase 1: núcleo da plataforma. Os módulos BPF serão habilitados por fases.",
     "toolsAvailable": "{count, plural, =0 {Em breve} one {# ferramenta disponível} other {# ferramentas disponíveis}}",
     "docInbox": "Pendências de documentos",
-    "qualityInbox": "Pendências de qualidade"
+    "qualityInbox": "Pendências de qualidade",
+    "calibrationsOverdue": "Calibrações vencidas"
   },
   "admin": {
     "users": {
@@ -306,7 +307,9 @@
       "perm": {
         "DOC_MANAGE": "Controle de documentos: criar documentos e novas versões",
         "DOC_APPROVE": "Aprovar documentos e declará-los obsoletos",
-        "QA_APPROVE": "Garantia da Qualidade: classificar e encerrar desvios, aprovar e verificar CAPA e mudanças"
+        "QA_APPROVE": "Garantia da Qualidade: classificar e encerrar desvios, aprovar e verificar CAPA e mudanças",
+        "METROLOGY_MANAGE": "Metrologia: registrar equipamentos, calibrações, verificações, manutenções e ensaios",
+        "METROLOGY_APPROVE": "Metrologia: aprovar calibrações e colocar equipamentos em serviço ou dar baixa"
       }
     },
     "resets": {
@@ -460,6 +463,36 @@
         "complete": "Ação executada",
         "cancel": "Ação cancelada"
       }
+    },
+    "equipment": {
+      "create": "Cadastro de equipamento",
+      "update": "Alteração de equipamento",
+      "out_of_service": "Equipamento fora de serviço",
+      "return_to_service": "Equipamento colocado em serviço",
+      "retire": "Baixa de equipamento",
+      "calibration_dates": "Datas de calibração atualizadas"
+    },
+    "calibration": {
+      "record": "Calibração registrada",
+      "approve": "Calibração aprovada",
+      "reject": "Calibração rejeitada",
+      "deviation_link": "Desvio vinculado à calibração",
+      "download": "Download de certificado"
+    },
+    "verification": {
+      "record": "Verificação intermediária registrada"
+    },
+    "maintenance": {
+      "record": "Manutenção registrada"
+    },
+    "qualification": {
+      "record": "Qualificação registrada",
+      "approve": "Qualificação aprovada",
+      "reject": "Qualificação rejeitada",
+      "download": "Download de relatório de qualificação"
+    },
+    "proficiency": {
+      "record": "Ensaio de proficiência registrado"
     }
   },
   "auditGroups": {
@@ -472,7 +505,13 @@
     "deviation": "Desvios",
     "capa": "CAPA",
     "change": "Controle de mudanças",
-    "quality": "Ações da qualidade"
+    "quality": "Ações da qualidade",
+    "equipment": "Equipamentos",
+    "calibration": "Calibrações",
+    "verification": "Verificações",
+    "maintenance": "Manutenção",
+    "qualification": "Qualificações",
+    "proficiency": "Ensaios de proficiência"
   },
   "errors": {
     "unexpected": "Ocorreu um erro inesperado. Tente novamente.",
@@ -525,7 +564,21 @@
     "actions_pending": "Ainda há ações pendentes.",
     "effectiveness_result_required": "Descreva o resultado da verificação (mínimo de 10 caracteres).",
     "assessment_incomplete": "Complete a avaliação (classificação, risco, notificação e impacto) antes de aprovar.",
-    "evidence_required": "Descreva a evidência (mínimo de 5 caracteres)."
+    "evidence_required": "Descreva a evidência (mínimo de 5 caracteres).",
+    "invalid_equipment_code": "Código inválido: use maiúsculas, números, ponto ou hífen (2 a 40 caracteres).",
+    "equipment_code_taken": "Já existe um equipamento com esse código.",
+    "out_of_range": "Valor fora do intervalo permitido.",
+    "calibration_overdue": "A calibração está vencida: calibre o equipamento antes de colocá-lo em serviço.",
+    "calibration_points_invalid": "Revise os pontos de calibração (valores numéricos e incerteza não negativa).",
+    "certificate_data_required": "Informe o fornecedor e o número do certificado.",
+    "reference_standard_required": "Selecione pelo menos um padrão utilizado.",
+    "not_a_reference_standard": "Um dos itens selecionados não é um padrão de referência.",
+    "reference_standard_not_traceable": "Um padrão não tinha calibração vigente na data da calibração (sem rastreabilidade).",
+    "calibration_result_required": "Declare o resultado: o equipamento não tem EMA definido.",
+    "impact_assessment_required": "Descreva a avaliação de impacto (mínimo de 10 caracteres): o resultado não é conforme.",
+    "deviation_already_linked": "Esta calibração já tem um desvio vinculado.",
+    "sigma_invalid": "σ deve ser maior que zero.",
+    "z_score_required": "Informe x, X e σ, ou o escore z do relatório."
   },
   "fieldErrors": {
     "required": "Obrigatório.",
@@ -875,7 +928,8 @@
         "RISK": "Gestão de riscos",
         "OOS": "OOS / OOT",
         "INSPECTION": "Inspeção da autoridade",
-        "OTHER": "Outro"
+        "OTHER": "Outro",
+        "PROFICIENCY": "Ensaio de proficiência"
       },
       "type": {
         "CORRECTIVE": "Corretiva",
@@ -1003,6 +1057,252 @@
       "returned": "Comentário da GQ",
       "data": "Dados da mudança",
       "assessmentData": "Avaliação"
+    }
+  },
+  "metrology": {
+    "equipmentStatus": {
+      "IN_SERVICE": "Em serviço",
+      "OUT_OF_SERVICE": "Fora de serviço",
+      "RETIRED": "Baixado"
+    },
+    "due": {
+      "NONE": "Não se aplica",
+      "OK": "Vigente",
+      "DUE_SOON": "Vence em breve",
+      "OVERDUE": "Vencida"
+    },
+    "calibrationKind": {
+      "INTERNAL": "Interna",
+      "EXTERNAL": "Externa"
+    },
+    "calibrationResult": {
+      "CONFORM": "Conforme",
+      "ADJUSTED": "Conforme após ajuste",
+      "NON_CONFORM": "Não conforme"
+    },
+    "recordStatus": {
+      "RECORDED": "Aguardando aprovação",
+      "APPROVED": "Aprovado",
+      "REJECTED": "Rejeitado"
+    },
+    "verificationResult": {
+      "CONFORM": "Conforme",
+      "NON_CONFORM": "Não conforme"
+    },
+    "maintenanceType": {
+      "PREVENTIVE": "Preventiva",
+      "CORRECTIVE": "Corretiva"
+    },
+    "qualificationPhase": {
+      "DQ": "QP – Projeto",
+      "IQ": "QI – Instalação",
+      "OQ": "QO – Operação",
+      "PQ": "QD – Desempenho"
+    },
+    "qualificationResult": {
+      "PASS": "Atende",
+      "FAIL": "Não atende"
+    },
+    "proficiencyOutcome": {
+      "SATISFACTORY": "Satisfatório",
+      "QUESTIONABLE": "Questionável",
+      "UNSATISFACTORY": "Insatisfatório"
+    },
+    "dashboard": {
+      "title": "Painel metrológico",
+      "total": "Equipamentos ativos",
+      "overdue": "Calibrações vencidas",
+      "dueSoon": "Vencem em 30 dias",
+      "outOfService": "Fora de serviço",
+      "verificationsDue": "Verificações vencidas",
+      "pendingCalibrations": "Calibrações para aprovar",
+      "pendingQualifications": "Qualificações para aprovar",
+      "empty": "Sem itens."
+    },
+    "equipment": {
+      "new": "Novo equipamento",
+      "empty": "Não há equipamentos para os filtros selecionados.",
+      "count": "{count, plural, one {# equipamento} other {# equipamentos}}",
+      "search": "Pesquisar por código, nome, série ou localização",
+      "showRetired": "Incluir baixados",
+      "filterDue": {
+        "all": "Todos os vencimentos",
+        "overdue": "Calibração vencida",
+        "soon": "Vence em 30 dias"
+      },
+      "codeHelp": "Ex.: BAL-001. Maiúsculas, números, ponto ou hífen. Não pode ser alterado.",
+      "fields": {
+        "code": "Código",
+        "name": "Nome",
+        "equipmentType": "Tipo de equipamento",
+        "manufacturer": "Fabricante",
+        "model": "Modelo",
+        "serialNumber": "N.º de série",
+        "location": "Localização",
+        "process": "Processo",
+        "owner": "Responsável",
+        "criticality": "Criticidade",
+        "isReferenceStandard": "É padrão de referência",
+        "measurementRange": "Faixa de medição",
+        "resolution": "Resolução",
+        "unit": "Unidade",
+        "maxPermissibleError": "Erro máximo admissível (EMA)",
+        "calibrationIntervalMonths": "Intervalo de calibração (meses)",
+        "verificationIntervalDays": "Intervalo de verificação (dias)",
+        "maintenanceIntervalMonths": "Intervalo de manutenção (meses)",
+        "lastCalibration": "Última calibração",
+        "nextCalibration": "Próxima calibração",
+        "nextVerification": "Próxima verificação",
+        "nextMaintenance": "Próxima manutenção",
+        "status": "Status",
+        "statusReason": "Motivo do status"
+      },
+      "empHelp": "Na unidade do equipamento. Regra de decisão: conforme se |erro| + U ≤ EMA.",
+      "edit": "Editar dados",
+      "editReason": "Motivo da alteração",
+      "outOfService": "Retirar de serviço",
+      "returnToService": "Colocar em serviço",
+      "returnHelp": "Requer calibração vigente. Fica assinado.",
+      "retire": "Dar baixa",
+      "retireHelp": "O equipamento deixa de ser usado definitivamente; seu histórico é mantido.",
+      "data": "Dados do equipamento",
+      "metrologyData": "Dados metrológicos",
+      "schedule": "Programação",
+      "history": {
+        "calibrations": "Calibrações",
+        "verifications": "Verificações intermediárias",
+        "maintenance": "Manutenções",
+        "qualifications": "Qualificações",
+        "proficiency": "Ensaios de proficiência"
+      },
+      "outOfServiceAlert": "Equipamento fora de serviço: {reason}. Não deve ser usado para medições BPF."
+    },
+    "calibration": {
+      "new": "Registrar calibração",
+      "program": "Programa de calibração",
+      "records": "Registros de calibração",
+      "empty": "Sem registros.",
+      "fields": {
+        "code": "Código",
+        "equipment": "Equipamento",
+        "kind": "Tipo",
+        "provider": "Laboratório / fornecedor",
+        "accreditation": "Acreditação",
+        "certificateNumber": "N.º do certificado",
+        "calibratedAt": "Data da calibração",
+        "standards": "Padrões utilizados",
+        "result": "Resultado",
+        "declaredResult": "Resultado declarado",
+        "computed": "Resultado calculado",
+        "comments": "Observações",
+        "impactAssessment": "Avaliação de impacto em medições anteriores",
+        "certificate": "Certificado",
+        "recordedBy": "Registrou",
+        "approvedBy": "Aprovou",
+        "status": "Status"
+      },
+      "standardsHelp": "Somente para calibrações internas. O padrão deve ter calibração vigente na data.",
+      "externalHelp": "Externa: fornecedor, n.º do certificado e arquivo do certificado são obrigatórios.",
+      "declaredHelp": "Obrigatório se o equipamento não tiver EMA. Com EMA, o sistema calcula a conformidade; escolha «Conforme após ajuste» se o equipamento foi ajustado.",
+      "impactHelp": "Obrigatória se não conforme: lotes, análises ou produtos medidos desde a última calibração conforme.",
+      "points": {
+        "title": "Pontos de calibração",
+        "nominal": "Valor nominal",
+        "reading": "Leitura do equipamento",
+        "uncertainty": "Incerteza U (k=2)",
+        "error": "Erro",
+        "conform": "Conformidade",
+        "add": "Adicionar ponto",
+        "remove": "Remover",
+        "rule": "Regra de decisão: conforme se |erro| + U ≤ EMA ({emp} {unit}).",
+        "noEmp": "O equipamento não tem EMA definido: declare o resultado.",
+        "yes": "Atende",
+        "no": "Não atende"
+      },
+      "approve": {
+        "title": "Aprovação (Metrologia)",
+        "approve": "Assinar aprovação",
+        "reject": "Rejeitar registro"
+      },
+      "openDeviation": "Abrir desvio",
+      "deviationLinked": "Desvio vinculado",
+      "nonConformAlert": "Resultado não conforme: o equipamento ficou fora de serviço.",
+      "download": "Baixar certificado",
+      "traceability": "Rastreabilidade",
+      "rejected": "Rejeitado: {reason}"
+    },
+    "verification": {
+      "new": "Registrar verificação",
+      "empty": "Sem verificações.",
+      "fields": {
+        "equipment": "Equipamento",
+        "performedAt": "Data",
+        "method": "Método / padrão utilizado",
+        "readings": "Leituras",
+        "result": "Resultado",
+        "comments": "Observações"
+      }
+    },
+    "maintenance": {
+      "new": "Registrar manutenção",
+      "empty": "Sem manutenções.",
+      "fields": {
+        "equipment": "Equipamento",
+        "type": "Tipo",
+        "performedAt": "Data",
+        "performedBy": "Executado por",
+        "description": "Trabalho realizado",
+        "requiresRecalibration": "Afeta a medição: requer recalibração"
+      }
+    },
+    "qualification": {
+      "new": "Registrar qualificação",
+      "empty": "Sem qualificações.",
+      "fields": {
+        "code": "Código",
+        "equipment": "Equipamento",
+        "phase": "Fase",
+        "protocolRef": "Protocolo",
+        "executedAt": "Data de execução",
+        "result": "Resultado",
+        "summary": "Resumo",
+        "report": "Relatório",
+        "status": "Status",
+        "recordedBy": "Registrou"
+      },
+      "approve": {
+        "title": "Aprovação (Garantia da Qualidade)",
+        "approve": "Assinar aprovação",
+        "reject": "Rejeitar"
+      },
+      "download": "Baixar relatório"
+    },
+    "proficiency": {
+      "new": "Registrar ensaio de proficiência",
+      "empty": "Sem ensaios de proficiência.",
+      "fields": {
+        "code": "Código",
+        "provider": "Provedor",
+        "scheme": "Programa",
+        "round": "Rodada",
+        "measurand": "Mensurando",
+        "equipment": "Equipamento (opcional)",
+        "reportedValue": "Valor informado (x)",
+        "assignedValue": "Valor designado (X)",
+        "sigma": "σ do ensaio",
+        "zScore": "Escore z",
+        "reportDate": "Data do relatório",
+        "outcome": "Resultado",
+        "comments": "Observações"
+      },
+      "zHelp": "Se não informar x, X e σ, digite o z do relatório do provedor.",
+      "rule": "Critério ISO 13528: |z| ≤ 2 satisfatório · 2 < |z| < 3 questionável · |z| ≥ 3 insatisfatório.",
+      "capaRequired": "Resultado insatisfatório: é necessária uma CAPA.",
+      "createCapa": "Criar CAPA",
+      "linkedCapas": "CAPA vinculadas"
+    },
+    "referenceStandards": {
+      "empty": "Não há padrões registrados."
     }
   }
 }

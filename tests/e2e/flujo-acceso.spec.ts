@@ -54,61 +54,6 @@ test("rutas privadas exigen sesión", async ({ page }) => {
   await expect(page).toHaveURL(/\/login\?callbackUrl=%2Fadmin%2Fusuarios/);
 });
 
-test("¿Olvidó su clave? → aprobación del admin → clave temporal → cambio obligatorio", async ({
-  page,
-}) => {
-  // 1. El usuario solicita el restablecimiento
-  await page.goto("/login");
-  await page.getByRole("button", { name: "¿Olvidó su clave?" }).click();
-  const dialog = page.getByRole("dialog");
-  await dialog.getByLabel("ID corporativo", { exact: true }).fill("PROPHAR");
-  await dialog.getByLabel("Usuario").fill("metrologia");
-  await dialog.getByLabel(/Comentario/).fill("Extensión 214");
-  await dialog.getByRole("button", { name: "Enviar solicitud" }).click();
-  await expect(
-    dialog.getByText(/el administrador de su empresa recibirá la solicitud/),
-  ).toBeVisible();
-
-  // 2. El administrador la aprueba
-  await login(page, "PROPHAR", "admin", SEED_PASSWORD);
-  await expect(page).toHaveURL(/\/inicio/);
-  await expect(page.getByTestId("pending-resets-badge")).toHaveText("1");
-  await page.goto("/admin/solicitudes-clave");
-  const card = page.getByTestId("reset-request-metrologia");
-  await expect(card).toContainText("Extensión 214");
-  page.once("dialog", (d) => d.accept());
-  await card.getByRole("button", { name: "Aprobar y generar clave" }).click();
-  const temporary = (await page.getByTestId("temporary-password").innerText()).trim();
-  expect(temporary).toMatch(/^[A-Za-z0-9]{12}$/);
-  await page
-    .getByRole("dialog")
-    .getByRole("button", { name: "Cerrar", exact: true })
-    .last()
-    .click();
-
-  // 3. Queda en el registro de auditoría
-  await page.goto("/admin/auditoria");
-  await expect(page.getByText("Solicitud de clave aprobada").first()).toBeVisible();
-  await logout(page);
-
-  // 4. El usuario entra con la clave temporal y debe cambiarla
-  await login(page, "PROPHAR", "metrologia", temporary);
-  await expect(page).toHaveURL(/\/cambiar-clave/);
-  await page.goto("/inicio");
-  await expect(page).toHaveURL(/\/cambiar-clave/);
-  await page.locator("#currentPassword").fill(temporary);
-  await page.locator("#newPassword").fill("Metro2026Calibra");
-  await page.locator("#confirmPassword").fill("Metro2026Calibra");
-  await page.getByRole("button", { name: "Actualizar contraseña" }).click();
-  await expect(page).toHaveURL(/\/inicio\?clave=actualizada/);
-  await expect(page.getByText("Su contraseña se actualizó correctamente.")).toBeVisible();
-
-  // 5. Un USUARIO no ve ni accede a Administración
-  await expect(page.getByTestId("area-admin")).toHaveCount(0);
-  const res = await page.goto("/admin/usuarios");
-  expect(res?.status()).toBe(404);
-});
-
 test("el administrador crea un usuario con clave temporal", async ({ page }) => {
   await login(page, "PROPHAR", "admin", SEED_PASSWORD);
   await page.goto("/admin/usuarios");
@@ -129,4 +74,59 @@ test("el administrador crea un usuario con clave temporal", async ({ page }) => 
   await dialog.getByRole("button", { name: "Crear" }).click();
   await expect(dialog.getByText("Ese usuario ya existe en su empresa.")).toBeVisible();
   await expect(dialog.getByLabel("Nombre completo")).toHaveValue("Otra Persona");
+});
+
+test("¿Olvidó su clave? → aprobación del admin → clave temporal → cambio obligatorio", async ({
+  page,
+}) => {
+  // 1. El usuario (creado en la prueba anterior, para no alterar los usuarios del seed) solicita el restablecimiento
+  await page.goto("/login");
+  await page.getByRole("button", { name: "¿Olvidó su clave?" }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("ID corporativo", { exact: true }).fill("PROPHAR");
+  await dialog.getByLabel("Usuario").fill("qa.analista");
+  await dialog.getByLabel(/Comentario/).fill("Extensión 214");
+  await dialog.getByRole("button", { name: "Enviar solicitud" }).click();
+  await expect(
+    dialog.getByText(/el administrador de su empresa recibirá la solicitud/),
+  ).toBeVisible();
+
+  // 2. El administrador la aprueba
+  await login(page, "PROPHAR", "admin", SEED_PASSWORD);
+  await expect(page).toHaveURL(/\/inicio/);
+  await expect(page.getByTestId("pending-resets-badge")).toHaveText("1");
+  await page.goto("/admin/solicitudes-clave");
+  const card = page.getByTestId("reset-request-qa.analista");
+  await expect(card).toContainText("Extensión 214");
+  page.once("dialog", (d) => d.accept());
+  await card.getByRole("button", { name: "Aprobar y generar clave" }).click();
+  const temporary = (await page.getByTestId("temporary-password").innerText()).trim();
+  expect(temporary).toMatch(/^[A-Za-z0-9]{12}$/);
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Cerrar", exact: true })
+    .last()
+    .click();
+
+  // 3. Queda en el registro de auditoría
+  await page.goto("/admin/auditoria");
+  await expect(page.getByText("Solicitud de clave aprobada").first()).toBeVisible();
+  await logout(page);
+
+  // 4. El usuario entra con la clave temporal y debe cambiarla
+  await login(page, "PROPHAR", "qa.analista", temporary);
+  await expect(page).toHaveURL(/\/cambiar-clave/);
+  await page.goto("/inicio");
+  await expect(page).toHaveURL(/\/cambiar-clave/);
+  await page.locator("#currentPassword").fill(temporary);
+  await page.locator("#newPassword").fill("Metro2026Calibra");
+  await page.locator("#confirmPassword").fill("Metro2026Calibra");
+  await page.getByRole("button", { name: "Actualizar contraseña" }).click();
+  await expect(page).toHaveURL(/\/inicio\?clave=actualizada/);
+  await expect(page.getByText("Su contraseña se actualizó correctamente.")).toBeVisible();
+
+  // 5. Un USUARIO no ve ni accede a Administración
+  await expect(page.getByTestId("area-admin")).toHaveCount(0);
+  const res = await page.goto("/admin/usuarios");
+  expect(res?.status()).toBe(404);
 });

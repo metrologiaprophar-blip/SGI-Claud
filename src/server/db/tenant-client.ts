@@ -14,6 +14,12 @@ export const TENANT_MODELS = new Set([
   "Capa",
   "ChangeControl",
   "QualityAction",
+  "Equipment",
+  "Calibration",
+  "Verification",
+  "Maintenance",
+  "Qualification",
+  "ProficiencyTest",
 ]);
 
 /** Modelos de solo inserción (integridad de datos GMP). */

@@ -5,20 +5,26 @@ import type { ServiceContext } from "@/server/context";
 import type { TenantDb } from "@/server/db/tenant-client";
 
 export type Tx = Parameters<Parameters<TenantDb["$transaction"]>[0]>[0];
-export type CodedModel = "deviation" | "capa" | "changeControl";
+export type CodedModel =
+  "deviation" | "capa" | "changeControl" | "calibration" | "qualification" | "proficiencyTest";
 
-/** Siguiente código correlativo por empresa y año: DEV-2026-0001, CAPA-2026-0001, CC-2026-0001. */
+type CodeDelegate = {
+  findFirst(args: {
+    where: { code: { startsWith: string } };
+    select: { code: true };
+    orderBy: { code: "desc" };
+  }): Promise<{ code: string } | null>;
+};
+
+/** Siguiente código correlativo por empresa y año: DEV-2026-0001, CAPA-2026-0001, CAL-2026-0001… */
 export async function nextCode(tx: Tx, model: CodedModel, prefix: string, now = new Date()) {
   const base = `${prefix}-${now.getUTCFullYear()}-`;
-  const where = { code: { startsWith: base } };
-  const select = { code: true } as const;
-  const orderBy = { code: "desc" } as const;
-  const last =
-    model === "deviation"
-      ? await tx.deviation.findFirst({ where, select, orderBy })
-      : model === "capa"
-        ? await tx.capa.findFirst({ where, select, orderBy })
-        : await tx.changeControl.findFirst({ where, select, orderBy });
+  const delegate = tx[model] as unknown as CodeDelegate;
+  const last = await delegate.findFirst({
+    where: { code: { startsWith: base } },
+    select: { code: true },
+    orderBy: { code: "desc" },
+  });
   const n = last ? Number.parseInt(last.code.slice(base.length), 10) + 1 : 1;
   return `${base}${String(n).padStart(4, "0")}`;
 }

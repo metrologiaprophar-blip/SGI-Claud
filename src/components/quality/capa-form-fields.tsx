@@ -18,12 +18,15 @@ export async function CapaFormFields({
   users,
   today,
   deviation,
+  fixedSource,
   defaultOwnerId,
   defaults,
 }: {
   users: { id: string; fullName: string }[];
   today: string;
   deviation?: { id: string; code: string };
+  /** El formulario ya fija el origen con campos ocultos (p. ej. ensayo de aptitud). */
+  fixedSource?: boolean;
   defaultOwnerId?: string;
   defaults?: { title?: string; problemStatement?: string; rootCause?: string | null };
 }) {
@@ -36,7 +39,7 @@ export async function CapaFormFields({
           <input type="hidden" name="deviationId" value={deviation.id} />
           <p className="text-sm text-slate-600">{t("fromDeviation", { code: deviation.code })}</p>
         </>
-      ) : (
+      ) : fixedSource ? null : (
         <div className="grid gap-4 sm:grid-cols-2">
           <Field id="nc-source" label={t("fields.source")}>
             <Select id="nc-source" name="source" required defaultValue="">

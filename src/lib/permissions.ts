@@ -1,5 +1,11 @@
 /** Permisos GMP asignables a usuarios (PRD §2). */
-export const PERMISSIONS = ["DOC_MANAGE", "DOC_APPROVE", "QA_APPROVE"] as const;
+export const PERMISSIONS = [
+  "DOC_MANAGE",
+  "DOC_APPROVE",
+  "QA_APPROVE",
+  "METROLOGY_MANAGE",
+  "METROLOGY_APPROVE",
+] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 
 export function parsePermissions(value: unknown): Permission[] {

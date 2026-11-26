@@ -120,6 +120,7 @@ enum CapaSource {
   RISK
   OOS
   INSPECTION
+  PROFICIENCY
   OTHER
 }
 
@@ -163,6 +164,57 @@ enum ActionStatus {
   PENDING
   DONE
   CANCELLED
+}
+
+enum EquipmentStatus {
+  IN_SERVICE
+  OUT_OF_SERVICE
+  RETIRED
+}
+
+enum CalibrationKind {
+  INTERNAL
+  EXTERNAL
+}
+
+enum CalibrationResult {
+  CONFORM
+  ADJUSTED
+  NON_CONFORM
+}
+
+enum RecordStatus {
+  RECORDED
+  APPROVED
+  REJECTED
+}
+
+enum VerificationResult {
+  CONFORM
+  NON_CONFORM
+}
+
+enum MaintenanceType {
+  PREVENTIVE
+  CORRECTIVE
+}
+
+enum QualificationPhase {
+  DQ
+  IQ
+  OQ
+  PQ
+}
+
+enum QualificationResult {
+  PASS
+  FAIL
+}
+
+enum ProficiencyOutcome {
+  SATISFACTORY
+  QUESTIONABLE
+  UNSATISFACTORY
 }
 
 /// Empresa (tenant). `code` es el "ID corporativo" del login.
@@ -223,6 +275,7 @@ model User {
   ownedCapas             Capa[]          @relation("CapaOwner")
   requestedChanges       ChangeControl[] @relation("ChangeRequester")
   assignedActions        QualityAction[] @relation("ActionResponsible")
+  ownedEquipment         Equipment[]     @relation("EquipmentOwner")
 
   @@unique([organizationId, username])
   @@index([organizationId])
@@ -283,6 +336,7 @@ model Process {
   documents      Document[]
   deviations     Deviation[]
   changeControls ChangeControl[]
+  equipment      Equipment[]
 
   @@unique([organizationId, code])
   @@index([organizationId])
@@ -532,4 +586,180 @@ model QualityAction {
   responsible   User           @relation("ActionResponsible", fields: [responsibleId], references: [id])
 
   @@index([organizationId, responsibleId, status])
+}
+
+/// Equipo o instrumento de medición. Las fechas de vencimiento se actualizan al aprobar registros.
+model Equipment {
+  id                        String          @id @default(cuid())
+  organizationId            String
+  code                      String
+  name                      String
+  equipmentType             String
+  manufacturer              String?
+  model                     String?
+  serialNumber              String?
+  location                  String?
+  processId                 String
+  ownerId                   String
+  criticality               RiskLevel       @default(MEDIUM)
+  isReferenceStandard       Boolean         @default(false)
+  measurementRange          String?
+  resolution                String?
+  unit                      String?
+  /// Error máximo permitido (EMP) en la unidad del equipo; base de la regla de decisión.
+  maxPermissibleError       Float?
+  calibrationIntervalMonths Int?
+  verificationIntervalDays  Int?
+  maintenanceIntervalMonths Int?
+  lastCalibrationAt         DateTime?
+  nextCalibrationDue        DateTime?
+  lastVerificationAt        DateTime?
+  nextVerificationDue       DateTime?
+  lastMaintenanceAt         DateTime?
+  nextMaintenanceDue        DateTime?
+  status                    EquipmentStatus @default(IN_SERVICE)
+  statusReason              String?
+  createdAt                 DateTime        @default(now())
+  updatedAt                 DateTime        @updatedAt
+
+  process        Process           @relation(fields: [processId], references: [id])
+  owner          User              @relation("EquipmentOwner", fields: [ownerId], references: [id])
+  calibrations   Calibration[]
+  verifications  Verification[]
+  maintenances   Maintenance[]
+  qualifications Qualification[]
+  proficiency    ProficiencyTest[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, status])
+}
+
+/// Calibración (interna o externa) con certificado, puntos medidos y decisión de conformidad.
+model Calibration {
+  id                   String             @id @default(cuid())
+  organizationId       String
+  code                 String
+  equipmentId          String
+  kind                 CalibrationKind
+  provider             String?
+  accreditation        String?
+  certificateNumber    String?
+  calibratedAt         DateTime
+  /// Puntos medidos (array JSON): { nominal, reading, error, uncertainty, conform }.
+  points               Json
+  unit                 String?
+  /// Patrones usados en una calibración interna (array JSON de ids de Equipment).
+  referenceStandardIds Json?
+  result               CalibrationResult
+  computedResult       CalibrationResult?
+  comments             String?
+  impactAssessment     String?
+  deviationId          String?
+  fileName             String?
+  fileMime             String?
+  fileSize             Int?
+  fileSha256           String?
+  storageKey           String?
+  status               RecordStatus       @default(RECORDED)
+  recordedById         String
+  approvedById         String?
+  approvedAt           DateTime?
+  rejectionReason      String?
+  createdAt            DateTime           @default(now())
+
+  equipment Equipment @relation(fields: [equipmentId], references: [id])
+
+  @@unique([organizationId, code])
+  @@index([organizationId, equipmentId])
+}
+
+/// Verificación intermedia entre calibraciones.
+model Verification {
+  id             String             @id @default(cuid())
+  organizationId String
+  equipmentId    String
+  performedAt    DateTime
+  performedById  String
+  method         String
+  readings       String
+  result         VerificationResult
+  comments       String?
+  createdAt      DateTime           @default(now())
+
+  equipment Equipment @relation(fields: [equipmentId], references: [id])
+
+  @@index([organizationId, equipmentId])
+}
+
+/// Mantenimiento preventivo o correctivo.
+model Maintenance {
+  id                    String          @id @default(cuid())
+  organizationId        String
+  equipmentId           String
+  type                  MaintenanceType
+  performedAt           DateTime
+  performedBy           String
+  description           String
+  requiresRecalibration Boolean         @default(false)
+  recordedById          String
+  createdAt             DateTime        @default(now())
+
+  equipment Equipment @relation(fields: [equipmentId], references: [id])
+
+  @@index([organizationId, equipmentId])
+}
+
+/// Calificación DQ/IQ/OQ/PQ con protocolo, informe y aprobación de Garantía de Calidad.
+model Qualification {
+  id              String              @id @default(cuid())
+  organizationId  String
+  code            String
+  equipmentId     String
+  phase           QualificationPhase
+  protocolRef     String
+  executedAt      DateTime
+  result          QualificationResult
+  summary         String
+  fileName        String?
+  fileMime        String?
+  fileSize        Int?
+  fileSha256      String?
+  storageKey      String?
+  status          RecordStatus        @default(RECORDED)
+  recordedById    String
+  approvedById    String?
+  approvedAt      DateTime?
+  rejectionReason String?
+  createdAt       DateTime            @default(now())
+
+  equipment Equipment @relation(fields: [equipmentId], references: [id])
+
+  @@unique([organizationId, code])
+  @@index([organizationId, equipmentId])
+}
+
+/// Ensayo de aptitud / comparación interlaboratorio (ISO/IEC 17025 §7.7.2, ISO 13528).
+model ProficiencyTest {
+  id             String             @id @default(cuid())
+  organizationId String
+  code           String
+  provider       String
+  scheme         String
+  round          String
+  measurand      String
+  equipmentId    String?
+  reportedValue  Float?
+  assignedValue  Float?
+  sigma          Float?
+  zScore         Float
+  outcome        ProficiencyOutcome
+  reportDate     DateTime
+  comments       String?
+  recordedById   String
+  createdAt      DateTime           @default(now())
+
+  equipment Equipment? @relation(fields: [equipmentId], references: [id])
+
+  @@unique([organizationId, code])
+  @@index([organizationId, reportDate])
 }

@@ -1,9 +1,4 @@
-import type {
-  InputHTMLAttributes,
-  ReactNode,
-  SelectHTMLAttributes,
-  TextareaHTMLAttributes,
-} from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 export const inputClass =
@@ -43,14 +38,14 @@ export function Field({ id, label, error, help, children, className }: FieldProp
 export const describedBy = (id: string, error?: string, help?: ReactNode) =>
   error ? `${id}-error` : help ? `${id}-help` : undefined;
 
-export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+export function Input({ className, ...props }: ComponentProps<"input">) {
   return <input className={cn(inputClass, className)} {...props} />;
 }
 
-export function Select({ className, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
+export function Select({ className, ...props }: ComponentProps<"select">) {
   return <select className={cn(inputClass, "pr-8", className)} {...props} />;
 }
 
-export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
   return <textarea className={cn(inputClass, "min-h-20", className)} {...props} />;
 }

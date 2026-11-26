@@ -8,6 +8,11 @@ Plataforma web para el Sistema de Gestión Integrado de PROPHAR: BPM/GMP farmac�
 
 ## Estado
 
+**Fase 4 (Metrología y laboratorio) completada:** equipos y patrones, programa de calibración con regla de
+decisión |error| + U ≤ EMP y trazabilidad de patrones, certificados, verificaciones, mantenimiento,
+calificaciones IQ/OQ/PQ, ensayos de aptitud (puntuación z) y fuera de servicio con desviación vinculada.
+Detalle en `PRD.md §15`.
+
 **Fase 3 (Calidad GMP) completada:** desviaciones (detección → clasificación → investigación → cierre),
 CAPA con plan aprobado y verificación de eficacia, y control de cambios con evaluación de impacto y riesgo
 (incluida la notificación a ARCSA). Detalle en `PRD.md §14`.

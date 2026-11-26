@@ -30,18 +30,23 @@ export default async function HomePage({
   const admin = isAdmin(session.user.role);
 
   const ctx = await getServiceContext();
-  const [activeUsers, pending, me, docInbox, qualityInbox] = await Promise.all([
-    db.user.count({ where: { status: "ACTIVE" } }),
-    admin ? countPendingResetRequests(db, session.user.id) : Promise.resolve(0),
-    db.auditLog.findMany({
-      where: { actorId: session.user.id, action: "auth.login.success" },
-      orderBy: { createdAt: "desc" },
-      take: 2,
-      select: { createdAt: true },
-    }),
-    countInbox(db, session.user.id),
-    countQualityInbox(ctx),
-  ]);
+  const [activeUsers, pending, me, docInbox, qualityInbox, calibrationsOverdue] = await Promise.all(
+    [
+      db.user.count({ where: { status: "ACTIVE" } }),
+      admin ? countPendingResetRequests(db, session.user.id) : Promise.resolve(0),
+      db.auditLog.findMany({
+        where: { actorId: session.user.id, action: "auth.login.success" },
+        orderBy: { createdAt: "desc" },
+        take: 2,
+        select: { createdAt: true },
+      }),
+      countInbox(db, session.user.id),
+      countQualityInbox(ctx),
+      db.equipment.count({
+        where: { status: { not: "RETIRED" }, nextCalibrationDue: { lt: new Date() } },
+      }),
+    ],
+  );
   const previousLogin = me[1]?.createdAt;
 
   const stats: { label: string; value: string; icon: IconKey; href?: string }[] = [
@@ -56,6 +61,12 @@ export default async function HomePage({
       value: String(qualityInbox),
       icon: "quality",
       href: "/calidad",
+    },
+    {
+      label: t("home.calibrationsOverdue"),
+      value: String(calibrationsOverdue),
+      icon: "gauge",
+      href: "/metrologia",
     },
     { label: t("home.yourRole"), value: t(`roles.${session.user.role}`), icon: "user" },
     {
@@ -96,7 +107,7 @@ export default async function HomePage({
 
       {clave === "actualizada" && <Alert tone="success">{t("home.passwordUpdated")}</Alert>}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {stats.map((s) => {
           const body = (
             <Card className="flex h-full items-center gap-4 p-5 transition-shadow hover:shadow-md">

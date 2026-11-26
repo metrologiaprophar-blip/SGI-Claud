@@ -70,6 +70,97 @@ async function grant(userId: string, permissions: string[]) {
     await prisma.user.update({ where: { id: userId }, data: { permissions: merged } });
 }
 
+/** Equipos de ejemplo de un laboratorio farmacéutico (solo si la empresa aún no tiene equipos). */
+async function seedEquipment(organizationId: string, ownerId: string) {
+  if ((await prisma.equipment.count({ where: { organizationId } })) > 0) return;
+  const proc = async (code: string) =>
+    (
+      await prisma.process.findUniqueOrThrow({
+        where: { organizationId_code: { organizationId, code } },
+      })
+    ).id;
+  const [cc, alm, met] = [await proc("CC"), await proc("ALM"), await proc("MET")];
+  const items = [
+    {
+      code: "BAL-001",
+      name: "Balanza analítica",
+      equipmentType: "Balanza",
+      manufacturer: "Mettler Toledo",
+      model: "XPR205",
+      location: "Laboratorio CC",
+      processId: cc,
+      criticality: "HIGH" as const,
+      measurementRange: "0–220 g",
+      resolution: "0,01 mg",
+      unit: "g",
+      maxPermissibleError: 0.0005,
+      calibrationIntervalMonths: 12,
+      verificationIntervalDays: 30,
+    },
+    {
+      code: "TER-012",
+      name: "Termohigrómetro cámara fría 2",
+      equipmentType: "Termohigrómetro",
+      location: "Almacén – Cámara fría 2",
+      processId: alm,
+      criticality: "HIGH" as const,
+      measurementRange: "-20–60 °C",
+      resolution: "0,1 °C",
+      unit: "°C",
+      maxPermissibleError: 0.5,
+      calibrationIntervalMonths: 12,
+    },
+    {
+      code: "PAT-PES-001",
+      name: "Juego de pesas patrón E2",
+      equipmentType: "Pesas patrón",
+      location: "Metrología",
+      processId: met,
+      criticality: "HIGH" as const,
+      isReferenceStandard: true,
+      measurementRange: "1 mg–200 g",
+      unit: "g",
+      calibrationIntervalMonths: 24,
+    },
+    {
+      code: "PH-003",
+      name: "pHmetro de mesa",
+      equipmentType: "pHmetro",
+      location: "Laboratorio CC",
+      processId: cc,
+      criticality: "MEDIUM" as const,
+      measurementRange: "0–14 pH",
+      resolution: "0,01 pH",
+      unit: "pH",
+      maxPermissibleError: 0.05,
+      calibrationIntervalMonths: 6,
+      verificationIntervalDays: 1,
+      maintenanceIntervalMonths: 12,
+    },
+  ];
+  const day = 86_400_000;
+  const now = Date.now();
+  // Fechas de ejemplo: patrón vigente, balanza que vence pronto, termohigrómetro vencido, pHmetro vigente.
+  const dates: Record<string, { last: number; next: number }> = {
+    "PAT-PES-001": { last: now - 200 * day, next: now + 530 * day },
+    "BAL-001": { last: now - 350 * day, next: now + 15 * day },
+    "TER-012": { last: now - 380 * day, next: now - 15 * day },
+    "PH-003": { last: now - 60 * day, next: now + 120 * day },
+  };
+  for (const item of items) {
+    const d = dates[item.code]!;
+    await prisma.equipment.create({
+      data: {
+        organizationId,
+        ownerId,
+        ...item,
+        lastCalibrationAt: new Date(d.last),
+        nextCalibrationDue: new Date(d.next),
+      },
+    });
+  }
+}
+
 async function upsertUser(
   organizationId: string,
   u: { username: string; fullName: string; role: Role; jobTitle?: string; email?: string },
@@ -175,9 +266,15 @@ async function main() {
   const byName = (code: string, username: string) =>
     results.find(([c, r]) => c === code && r.user.username === username)?.[1].user.id;
   // Circuito documental de ejemplo: metrología elabora, calidad revisa, el jefe de GC aprueba.
-  await grant(byName("PROPHAR", "admin")!, ["DOC_MANAGE", "DOC_APPROVE", "QA_APPROVE"]);
-  await grant(byName("PROPHAR", "metrologia")!, ["DOC_MANAGE"]);
-  await grant(byName("PROPHAR", "calidad")!, ["QA_APPROVE"]);
+  await grant(byName("PROPHAR", "admin")!, [
+    "DOC_MANAGE",
+    "DOC_APPROVE",
+    "QA_APPROVE",
+    "METROLOGY_APPROVE",
+  ]);
+  await grant(byName("PROPHAR", "metrologia")!, ["DOC_MANAGE", "METROLOGY_MANAGE"]);
+  await grant(byName("PROPHAR", "calidad")!, ["QA_APPROVE", "METROLOGY_APPROVE"]);
+  await seedEquipment(prophar.id, byName("PROPHAR", "metrologia")!);
   await grant(byName("OTRA", "admin")!, ["DOC_MANAGE", "DOC_APPROVE", "QA_APPROVE"]);
 
   console.log("\nSeed completado:");

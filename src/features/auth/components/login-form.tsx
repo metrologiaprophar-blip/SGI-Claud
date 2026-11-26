@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -18,9 +18,10 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
   const t = useTranslations("login");
   const { fieldError } = useActionMessages();
   const [state, formAction, pending] = useActionState(loginAction, null);
-  const [orgCode, setOrgCode] = useState("");
-  // Campos controlados: React 19 reinicia los no controlados tras cada envío.
-  const [username, setUsername] = useState("");
+  // Campos NO controlados: conservan lo escrito aunque la página aún no haya cargado el JavaScript
+  // (un campo controlado se vaciaría al hidratar). El envío usa submitWithoutReset, que no los borra.
+  const orgRef = useRef<HTMLInputElement>(null);
+  const [orgForForgot, setOrgForForgot] = useState("");
   const [remember, setRemember] = useState(true);
   const [forgotOpen, setForgotOpen] = useState(false);
   const [forgotKey, setForgotKey] = useState(0);
@@ -28,9 +29,8 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(ORG_KEY);
-      // Recupera el ID corporativo recordado en este dispositivo (solo existe en el cliente).
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (saved) setOrgCode(saved);
+      // Recupera el ID corporativo recordado, sin pisar lo que la persona ya haya escrito.
+      if (saved && orgRef.current && !orgRef.current.value) orgRef.current.value = saved;
     } catch {
       /* almacenamiento no disponible */
     }
@@ -38,7 +38,8 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
 
   function rememberOrg() {
     try {
-      if (remember && orgCode.trim()) localStorage.setItem(ORG_KEY, orgCode.trim().toUpperCase());
+      const orgCode = orgRef.current?.value.trim().toUpperCase() ?? "";
+      if (remember && orgCode) localStorage.setItem(ORG_KEY, orgCode);
       else localStorage.removeItem(ORG_KEY);
     } catch {
       /* almacenamiento no disponible */
@@ -73,8 +74,10 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
             <Input
               id="organizationCode"
               name="organizationCode"
-              value={orgCode}
-              onChange={(e) => setOrgCode(e.target.value.toUpperCase())}
+              ref={orgRef}
+              onChange={(e) => {
+                e.target.value = e.target.value.toUpperCase();
+              }}
               placeholder={t("organizationCodePlaceholder")}
               autoComplete="organization"
               autoCapitalize="characters"
@@ -96,8 +99,6 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
             <Input
               id="username"
               name="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
               placeholder={t("usernamePlaceholder")}
               autoComplete="username"
               autoCapitalize="none"
@@ -118,6 +119,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
             <button
               type="button"
               onClick={() => {
+                setOrgForForgot(orgRef.current?.value ?? "");
                 setForgotKey((k) => k + 1);
                 setForgotOpen(true);
               }}
@@ -160,7 +162,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
         key={forgotKey}
         open={forgotOpen}
         onClose={() => setForgotOpen(false)}
-        defaultOrgCode={orgCode}
+        defaultOrgCode={orgForForgot}
       />
     </>
   );

@@ -59,7 +59,7 @@ src/
   components/ui/         # Button, Input, Modal, Table, Badge, Dropdown…
   components/layout/     # TopNav, AreaMenu, Breadcrumbs, LanguageSwitcher, InstallPwaButton, UserMenu
   features/<modulo>/     # service.ts (lógica testeable) · actions.ts ("use server") · components/
-                         # documents, deviations, capa, change-control, quality (compartido)
+                         # documents, deviations, capa, change-control, quality (compartido), metrology
   server/
     db/client.ts         # PrismaClient singleton (uso restringido)
     db/tenant-client.ts  # createTenantClient(): extensión Prisma + TENANT_MODELS
@@ -104,6 +104,8 @@ eligen el esquema según esa variable; **solo se edita a mano `prisma/schema.pri
 Antes de dar una tarea por terminada: `npm run lint && npm run typecheck && npm test` y, si cambia la
 interfaz o la autenticación, `npm run test:e2e`.
 
+Las pruebas e2e amplían el límite de logins por IP (`LOGIN_RATE_LIMIT`) y no deben modificar la clave de los
+usuarios del seed (cada prueba que lo necesite crea su propio usuario).
 Las bases de pruebas (`test.db`, `e2e.db`) y sus carpetas de archivos (`storage-test/`, `storage-e2e/`) se
 recrean solas en cada ejecución. Prisma bloquea
 `db push --force-reset` lanzado por agentes: no forzarlo; para limpiar la BD de desarrollo, que lo haga
@@ -167,6 +169,9 @@ una persona (`rm prisma/generated/sqlite/dev.db && npm run db:setup`).
 15. **Registros de calidad**: código con `nextCode()` dentro de la transacción del alta y `withCodeRetry()`;
     fechas "AAAA-MM-DD" con `parseDay()` (zona horaria de la empresa); las acciones de planes van en
     `QualityAction` mediante `features/quality/actions-service.ts`.
+16. **Metrología**: la conformidad de una calibración la decide `features/metrology/rules.ts` (|error| + U ≤ EMP),
+    usado igual en el cliente (cálculo en vivo) y en el servidor (decisión registrada). Todo resultado no conforme
+    (calibración, verificación, calificación, mantenimiento que afecta a la medición) llama a `setOutOfService()`.
 
 ## Convenciones de código
 
@@ -195,8 +200,9 @@ resuelve su propia solicitud de clave ni cambia su propio rol/estado.
 | `PROPHAR` | `calidad` | USUARIO | igual que el admin |
 | `OTRA` | `admin` | ADMIN_EMPRESA | igual (solo para pruebas de aislamiento) |
 
-Permisos GMP del seed: `admin` → `DOC_MANAGE` + `DOC_APPROVE` + `QA_APPROVE`; `metrologia` → `DOC_MANAGE`;
-`calidad` → `QA_APPROVE`. Volver a ejecutar el seed añade los permisos de referencia que falten (no quita ninguno).
+Permisos GMP del seed: `admin` → `DOC_MANAGE` + `DOC_APPROVE` + `QA_APPROVE` + `METROLOGY_APPROVE`;
+`metrologia` → `DOC_MANAGE` + `METROLOGY_MANAGE`; `calidad` → `QA_APPROVE` + `METROLOGY_APPROVE`.
+El seed crea 4 equipos de ejemplo en PROPHAR (balanza, termohigrómetro vencido, juego de pesas patrón y pHmetro). Volver a ejecutar el seed añade los permisos de referencia que falten (no quita ninguno).
 Circuitos de ejemplo: metrología elabora/investiga, calidad revisa o verifica, admin aprueba.
 
 Solo para desarrollo: el seed se niega a ejecutarse en producción sin las variables definidas, y los

@@ -62,12 +62,13 @@ La arquitectura es multiempresa (SaaS), aunque el primer y principal cliente es 
 | **F1 — Núcleo** | Portal de acceso, autenticación, multiempresa, roles, registro de auditoría preparado para GMP, restablecimiento de clave por aprobación, barra superior por áreas, inicio, administración de usuarios, PWA, ES/EN/PT. **(Este plan)** |
 | F2 — Documentos GMP ✅ | Listado maestro, POE/SOP, especificaciones, registros; versiones; revisión y aprobación con **firma electrónica**; lectura obligatoria; aviso de copia no controlada. Detalle en §13. |
 | F3 — Calidad GMP ✅ | **Desviaciones**, **CAPA**, **Control de cambios**, con evaluación de riesgo e impacto. Detalle en §14. |
-| F4 — Metrología y laboratorio | Inventario de equipos e instrumentos, plan y certificados de **calibración**, verificaciones intermedias, **calificación IQ/OQ/PQ**, mantenimiento, equipos fuera de servicio y evaluación de impacto. **ISO/IEC 17025**: patrones y materiales de referencia con trazabilidad, estimación de incertidumbre, validación/verificación de métodos, ensayos de aptitud e interlaboratorios, informes y certificados. |
+| F4 — Metrología y laboratorio ✅ | Inventario de equipos, programa y registros de **calibración** con regla de decisión y trazabilidad de patrones, verificaciones intermedias, mantenimiento, **calificación DQ/IQ/OQ/PQ**, fuera de servicio con evaluación de impacto y desviación vinculada, **ensayos de aptitud** (ISO 13528). Detalle en §15. |
 | F5 — Almacén y distribución (BPADT) | Áreas y ubicaciones, **monitoreo de temperatura y humedad**, mapeo térmico, **excursiones**, recepción y cuarentena, despacho y transporte, cadena de frío, devoluciones, productos sospechosos/falsificados, **retiros de mercado y simulacros**. |
 | F6 — Auditorías, proveedores, quejas y capacitación | Plan anual, **autoinspecciones GMP/BPADT** con checklist y puntuación, auditorías a proveedores, inspecciones de la autoridad; calificación de proveedores y clientes; **quejas de producto**; matriz y registros de **capacitación**. |
 | F7 — Dirección e indicadores | Indicadores y objetivos, gestión de riesgos de calidad (ICH Q9), **revisión anual de producto (RAP/PQR)**, revisión por la dirección, contexto/partes interesadas/política (ISO 9001). |
 | F8 — Producción y laboratorio | Productos y registros sanitarios, lotes y trazabilidad, liberación de lotes, **OOS/OOT**, validaciones (proceso, limpieza, métodos, sistemas computarizados), monitoreo ambiental; consola SUPER_ADMIN y exportaciones. |
 | F9 — Ambiente y SST | **ISO 14001**: aspectos e impactos, matriz legal, residuos, emergencias y simulacros. **ISO 45001**: IPERC, incidentes y accidentes, EPP, consulta y participación. |
+| F10 — Laboratorio avanzado (ISO/IEC 17025) | Estimación de incertidumbre (presupuestos GUM), validación y verificación de métodos, emisión de informes de ensayo y certificados de calibración. |
 
 ---
 
@@ -438,7 +439,59 @@ inspección. La crea QA, o el investigador si nace de su desviación.
 - Vincular un control de cambios con los documentos que actualiza (fase 2) y generar la CAPA desde auditorías y
   quejas cuando existan esos módulos (fase 6).
 
-## 15. Preguntas abiertas
+## 15. Fase 4 — Metrología y laboratorio (implementada)
+
+Permisos nuevos: `METROLOGY_MANAGE` (registrar equipos, calibraciones, verificaciones, mantenimientos y ensayos)
+y `METROLOGY_APPROVE` (aprobar calibraciones, poner en servicio y dar de baja). Las calificaciones las aprueba
+Garantía de Calidad (`QA_APPROVE`). Códigos: `CAL-2026-0001`, `QUAL-2026-0001`, `EA-2026-0001`.
+
+### Equipos
+- **Ficha del equipo:**
+  - identificación, proceso, responsable, criticidad y si es patrón de referencia;
+  - rango, resolución, unidad y **error máximo permitido (EMP)**;
+  - intervalos de calibración, verificación y mantenimiento.
+- **Vencimientos:** las fechas se recalculan automáticamente al aprobar o registrar.
+  - Panel del área: vencidas, próximas a 30 días, fuera de servicio, verificaciones vencidas y registros por aprobar.
+  - Contador de calibraciones vencidas en Inicio.
+- **Estados:**
+  - en servicio;
+  - fuera de servicio, con motivo;
+  - **puesta en servicio firmada**, bloqueada si la calibración está vencida;
+  - baja definitiva firmada, que conserva el historial.
+
+### Calibraciones
+- **Externa:** proveedor, acreditación, n.º de certificado y **archivo del certificado** (tipo real validado, SHA-256).
+- **Interna:** patrones utilizados. Cada patrón debe tener **calibración vigente en la fecha** (trazabilidad); si no, el
+  registro se rechaza.
+- **Puntos medidos:** nominal, lectura e incertidumbre expandida U (k=2). El error y la conformidad se calculan
+  en vivo con la **regla de decisión documentada: conforme si |error| + U ≤ EMP** (ILAC-G8, banda de guarda = U).
+  - Sin EMP, la persona declara el resultado.
+  - "Conforme tras ajuste" solo es posible si el cálculo es conforme.
+- **No conforme:**
+  - exige la evaluación del impacto sobre las mediciones anteriores;
+  - el equipo queda **fuera de servicio de inmediato**;
+  - con un clic se abre una **desviación** (categoría Equipo) vinculada.
+- **Aprobación** firmada por alguien con `METROLOGY_APPROVE` distinto de quien registró.
+  - Al aprobar, se actualizan la última calibración y el próximo vencimiento, solo si es la más reciente.
+  - Si es conforme, el equipo vuelve a servicio.
+
+### Otros registros
+- **Verificación intermedia:** firmada por quien la realiza. Si no es conforme, el equipo queda fuera de servicio.
+- **Mantenimiento** preventivo o correctivo. Si afecta a la medición, el equipo queda fuera de servicio y la
+  calibración vence en ese momento.
+- **Calificación DQ/IQ/OQ/PQ:** protocolo, resultado, resumen e informe adjunto, con aprobación firmada de QA. Si
+  falla, el equipo queda fuera de servicio.
+- **Ensayos de aptitud:**
+  - z = (x − X)/σ, o el z del informe del proveedor;
+  - clasificación según ISO 13528: satisfactorio, cuestionable o insatisfactorio;
+  - si es insatisfactorio, QA crea la CAPA desde el propio ensayo (origen "Ensayo de aptitud").
+
+### Pendiente (fase 10)
+- Estimación de incertidumbre (presupuestos GUM) y validación de métodos.
+- Emisión de informes de ensayo y certificados de calibración.
+- Etiquetas con código QR de estado de calibración.
+
+## 16. Preguntas abiertas
 
 - Orden de las fases F2–F8; propuesta: F2 Documentos → F3 Calidad GMP → F4 Metrología → F5 BPADT.
 - Formato de los dataloggers de temperatura (exportan CSV, API, ninguno).

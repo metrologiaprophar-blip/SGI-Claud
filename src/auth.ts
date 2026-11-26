@@ -13,6 +13,8 @@ const credentialsSchema = z.object({
 });
 
 const SESSION_MAX_AGE = 8 * 60 * 60; // 8 h de duración absoluta
+/** Intentos de login por IP cada 15 minutos (configurable; las pruebas e2e lo amplían). */
+const LOGIN_LIMIT = Number(process.env.LOGIN_RATE_LIMIT ?? 20) || 20;
 
 function applyUser(token: JWT, u: AuthenticatedUser | User): JWT {
   return {
@@ -55,7 +57,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         const parsed = credentialsSchema.safeParse(raw);
         if (!parsed.success) return null;
         const info = requestInfoFrom(request.headers);
-        if (!rateLimit(`login:${info.ip ?? "unknown"}`, 20, 15 * 60_000)) return null;
+        if (!rateLimit(`login:${info.ip ?? "unknown"}`, LOGIN_LIMIT, 15 * 60_000)) return null;
         const user = await authenticate(parsed.data, info);
         return user as unknown as User | null;
       },

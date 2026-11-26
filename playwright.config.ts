@@ -19,6 +19,7 @@ export default defineConfig({
       DATABASE_PROVIDER: "sqlite",
       DATABASE_URL: "file:./e2e.db",
       STORAGE_DIR: "storage-e2e",
+      LOGIN_RATE_LIMIT: "500",
       SEED_FORCE_PASSWORD_CHANGE: "false",
     },
   },

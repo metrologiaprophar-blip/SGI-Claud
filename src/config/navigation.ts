@@ -5,7 +5,7 @@ import type { Role } from "@prisma/client";
  * - `key`: clave i18n bajo `nav.tools.<key>` (título) y `nav.toolDescriptions.<key>`.
  * - `phase`: fase del roadmap; las herramientas con phase > CURRENT_PHASE muestran "Próximamente".
  */
-export const CURRENT_PHASE = 3;
+export const CURRENT_PHASE = 4;
 
 export type NavTool = { key: string; slug: string; phase: number; standards: Standard[] };
 export type NavArea = {
@@ -80,9 +80,9 @@ export const NAV_AREAS: NavArea[] = [
       t("calibrations", "calibraciones", 4, QUALITY),
       t("verifications", "verificaciones", 4, QUALITY),
       t("referenceStandards", "patrones-materiales-referencia", 4, ["ISO17025", "GMP"]),
-      t("uncertainty", "incertidumbre-validacion-metodos", 4, ["ISO17025", "GMP"]),
+      t("uncertainty", "incertidumbre-validacion-metodos", 10, ["ISO17025", "GMP"]),
       t("proficiency", "ensayos-aptitud", 4, ["ISO17025"]),
-      t("labReports", "informes-certificados", 4, ["ISO17025"]),
+      t("labReports", "informes-certificados", 10, ["ISO17025"]),
       t("qualifications", "calificaciones", 4, ["GMP", "BPADT"]),
       t("maintenance", "mantenimiento", 4, QUALITY),
     ],

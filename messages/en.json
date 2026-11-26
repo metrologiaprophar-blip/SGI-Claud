@@ -278,7 +278,8 @@
     "phaseNotice": "Phase 1: platform core. GMP modules will be enabled in phases.",
     "toolsAvailable": "{count, plural, =0 {Coming soon} one {# tool available} other {# tools available}}",
     "docInbox": "Document tasks",
-    "qualityInbox": "Quality tasks"
+    "qualityInbox": "Quality tasks",
+    "calibrationsOverdue": "Overdue calibrations"
   },
   "admin": {
     "users": {
@@ -306,7 +307,9 @@
       "perm": {
         "DOC_MANAGE": "Document control: create documents and new versions",
         "DOC_APPROVE": "Approve documents and declare them obsolete",
-        "QA_APPROVE": "Quality Assurance: classify and close deviations, approve and verify CAPAs and changes"
+        "QA_APPROVE": "Quality Assurance: classify and close deviations, approve and verify CAPAs and changes",
+        "METROLOGY_MANAGE": "Metrology: record equipment, calibrations, verifications, maintenance and proficiency tests",
+        "METROLOGY_APPROVE": "Metrology: approve calibrations and return or retire equipment"
       }
     },
     "resets": {
@@ -460,6 +463,36 @@
         "complete": "Action completed",
         "cancel": "Action cancelled"
       }
+    },
+    "equipment": {
+      "create": "Equipment created",
+      "update": "Equipment modified",
+      "out_of_service": "Equipment out of service",
+      "return_to_service": "Equipment returned to service",
+      "retire": "Equipment retired",
+      "calibration_dates": "Calibration dates updated"
+    },
+    "calibration": {
+      "record": "Calibration recorded",
+      "approve": "Calibration approved",
+      "reject": "Calibration rejected",
+      "deviation_link": "Deviation linked to calibration",
+      "download": "Certificate downloaded"
+    },
+    "verification": {
+      "record": "Intermediate check recorded"
+    },
+    "maintenance": {
+      "record": "Maintenance recorded"
+    },
+    "qualification": {
+      "record": "Qualification recorded",
+      "approve": "Qualification approved",
+      "reject": "Qualification rejected",
+      "download": "Qualification report downloaded"
+    },
+    "proficiency": {
+      "record": "Proficiency test recorded"
     }
   },
   "auditGroups": {
@@ -472,7 +505,13 @@
     "deviation": "Deviations",
     "capa": "CAPA",
     "change": "Change control",
-    "quality": "Quality actions"
+    "quality": "Quality actions",
+    "equipment": "Equipment",
+    "calibration": "Calibrations",
+    "verification": "Verifications",
+    "maintenance": "Maintenance",
+    "qualification": "Qualifications",
+    "proficiency": "Proficiency tests"
   },
   "errors": {
     "unexpected": "An unexpected error occurred. Please try again.",
@@ -525,7 +564,21 @@
     "actions_pending": "There are still pending actions.",
     "effectiveness_result_required": "Describe the verification result (at least 10 characters).",
     "assessment_incomplete": "Complete the assessment (classification, risk, notification and impact) before approving.",
-    "evidence_required": "Describe the evidence (at least 5 characters)."
+    "evidence_required": "Describe the evidence (at least 5 characters).",
+    "invalid_equipment_code": "Invalid code: use uppercase letters, numbers, dot or hyphen (2 to 40 characters).",
+    "equipment_code_taken": "Equipment with that code already exists.",
+    "out_of_range": "Value outside the allowed range.",
+    "calibration_overdue": "The calibration is overdue: calibrate the equipment before returning it to service.",
+    "calibration_points_invalid": "Check the calibration points (numeric values and non-negative uncertainty).",
+    "certificate_data_required": "Enter the provider and certificate number.",
+    "reference_standard_required": "Select at least one standard used.",
+    "not_a_reference_standard": "One of the selected items is not a reference standard.",
+    "reference_standard_not_traceable": "A standard had no valid calibration on the calibration date (no traceability).",
+    "calibration_result_required": "Declare the result: the equipment has no MPE.",
+    "impact_assessment_required": "Describe the impact assessment (at least 10 characters): the result is non-conforming.",
+    "deviation_already_linked": "This calibration already has a linked deviation.",
+    "sigma_invalid": "σ must be greater than zero.",
+    "z_score_required": "Enter x, X and σ, or the z-score from the report."
   },
   "fieldErrors": {
     "required": "Required.",
@@ -875,7 +928,8 @@
         "RISK": "Risk management",
         "OOS": "OOS / OOT",
         "INSPECTION": "Regulatory inspection",
-        "OTHER": "Other"
+        "OTHER": "Other",
+        "PROFICIENCY": "Proficiency test"
       },
       "type": {
         "CORRECTIVE": "Corrective",
@@ -1003,6 +1057,252 @@
       "returned": "QA comment",
       "data": "Change details",
       "assessmentData": "Assessment"
+    }
+  },
+  "metrology": {
+    "equipmentStatus": {
+      "IN_SERVICE": "In service",
+      "OUT_OF_SERVICE": "Out of service",
+      "RETIRED": "Retired"
+    },
+    "due": {
+      "NONE": "Not applicable",
+      "OK": "Valid",
+      "DUE_SOON": "Due soon",
+      "OVERDUE": "Overdue"
+    },
+    "calibrationKind": {
+      "INTERNAL": "Internal",
+      "EXTERNAL": "External"
+    },
+    "calibrationResult": {
+      "CONFORM": "Conforming",
+      "ADJUSTED": "Conforming after adjustment",
+      "NON_CONFORM": "Non-conforming"
+    },
+    "recordStatus": {
+      "RECORDED": "Pending approval",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "verificationResult": {
+      "CONFORM": "Conforming",
+      "NON_CONFORM": "Non-conforming"
+    },
+    "maintenanceType": {
+      "PREVENTIVE": "Preventive",
+      "CORRECTIVE": "Corrective"
+    },
+    "qualificationPhase": {
+      "DQ": "DQ – Design",
+      "IQ": "IQ – Installation",
+      "OQ": "OQ – Operational",
+      "PQ": "PQ – Performance"
+    },
+    "qualificationResult": {
+      "PASS": "Pass",
+      "FAIL": "Fail"
+    },
+    "proficiencyOutcome": {
+      "SATISFACTORY": "Satisfactory",
+      "QUESTIONABLE": "Questionable",
+      "UNSATISFACTORY": "Unsatisfactory"
+    },
+    "dashboard": {
+      "title": "Metrology dashboard",
+      "total": "Active equipment",
+      "overdue": "Overdue calibrations",
+      "dueSoon": "Due within 30 days",
+      "outOfService": "Out of service",
+      "verificationsDue": "Overdue verifications",
+      "pendingCalibrations": "Calibrations to approve",
+      "pendingQualifications": "Qualifications to approve",
+      "empty": "Nothing here."
+    },
+    "equipment": {
+      "new": "New equipment",
+      "empty": "No equipment matches the selected filters.",
+      "count": "{count, plural, one {# item} other {# items}}",
+      "search": "Search by code, name, serial or location",
+      "showRetired": "Include retired",
+      "filterDue": {
+        "all": "All due dates",
+        "overdue": "Calibration overdue",
+        "soon": "Due within 30 days"
+      },
+      "codeHelp": "E.g.: BAL-001. Uppercase letters, numbers, dot or hyphen. Cannot be changed.",
+      "fields": {
+        "code": "Code",
+        "name": "Name",
+        "equipmentType": "Equipment type",
+        "manufacturer": "Manufacturer",
+        "model": "Model",
+        "serialNumber": "Serial number",
+        "location": "Location",
+        "process": "Process",
+        "owner": "Owner",
+        "criticality": "Criticality",
+        "isReferenceStandard": "Is a reference standard",
+        "measurementRange": "Measuring range",
+        "resolution": "Resolution",
+        "unit": "Unit",
+        "maxPermissibleError": "Maximum permissible error (MPE)",
+        "calibrationIntervalMonths": "Calibration interval (months)",
+        "verificationIntervalDays": "Verification interval (days)",
+        "maintenanceIntervalMonths": "Maintenance interval (months)",
+        "lastCalibration": "Last calibration",
+        "nextCalibration": "Next calibration",
+        "nextVerification": "Next verification",
+        "nextMaintenance": "Next maintenance",
+        "status": "Status",
+        "statusReason": "Status reason"
+      },
+      "empHelp": "In the equipment unit. Decision rule: conforming if |error| + U ≤ MPE.",
+      "edit": "Edit details",
+      "editReason": "Reason for change",
+      "outOfService": "Take out of service",
+      "returnToService": "Return to service",
+      "returnHelp": "Requires a valid calibration. It is signed.",
+      "retire": "Retire",
+      "retireHelp": "The equipment is permanently withdrawn; its history is kept.",
+      "data": "Equipment details",
+      "metrologyData": "Metrological data",
+      "schedule": "Schedule",
+      "history": {
+        "calibrations": "Calibrations",
+        "verifications": "Intermediate checks",
+        "maintenance": "Maintenance",
+        "qualifications": "Qualifications",
+        "proficiency": "Proficiency tests"
+      },
+      "outOfServiceAlert": "Equipment out of service: {reason}. It must not be used for GMP measurements."
+    },
+    "calibration": {
+      "new": "Record calibration",
+      "program": "Calibration schedule",
+      "records": "Calibration records",
+      "empty": "No records.",
+      "fields": {
+        "code": "Code",
+        "equipment": "Equipment",
+        "kind": "Type",
+        "provider": "Laboratory / provider",
+        "accreditation": "Accreditation",
+        "certificateNumber": "Certificate no.",
+        "calibratedAt": "Calibration date",
+        "standards": "Standards used",
+        "result": "Result",
+        "declaredResult": "Declared result",
+        "computed": "Computed result",
+        "comments": "Remarks",
+        "impactAssessment": "Impact assessment on previous measurements",
+        "certificate": "Certificate",
+        "recordedBy": "Recorded by",
+        "approvedBy": "Approved by",
+        "status": "Status"
+      },
+      "standardsHelp": "Internal calibrations only. The standard must have a valid calibration on the date.",
+      "externalHelp": "External: provider, certificate number and certificate file are required.",
+      "declaredHelp": "Required if the equipment has no MPE. With an MPE, the system computes conformity; choose “Conforming after adjustment” if it was adjusted.",
+      "impactHelp": "Required if non-conforming: batches, analyses or products measured since the last conforming calibration.",
+      "points": {
+        "title": "Calibration points",
+        "nominal": "Nominal value",
+        "reading": "Equipment reading",
+        "uncertainty": "Uncertainty U (k=2)",
+        "error": "Error",
+        "conform": "Conformity",
+        "add": "Add point",
+        "remove": "Remove",
+        "rule": "Decision rule: conforming if |error| + U ≤ MPE ({emp} {unit}).",
+        "noEmp": "The equipment has no MPE: declare the result.",
+        "yes": "Pass",
+        "no": "Fail"
+      },
+      "approve": {
+        "title": "Approval (Metrology)",
+        "approve": "Sign approval",
+        "reject": "Reject record"
+      },
+      "openDeviation": "Open deviation",
+      "deviationLinked": "Linked deviation",
+      "nonConformAlert": "Non-conforming result: the equipment was taken out of service.",
+      "download": "Download certificate",
+      "traceability": "Traceability",
+      "rejected": "Rejected: {reason}"
+    },
+    "verification": {
+      "new": "Record verification",
+      "empty": "No verifications.",
+      "fields": {
+        "equipment": "Equipment",
+        "performedAt": "Date",
+        "method": "Method / standard used",
+        "readings": "Readings",
+        "result": "Result",
+        "comments": "Remarks"
+      }
+    },
+    "maintenance": {
+      "new": "Record maintenance",
+      "empty": "No maintenance.",
+      "fields": {
+        "equipment": "Equipment",
+        "type": "Type",
+        "performedAt": "Date",
+        "performedBy": "Performed by",
+        "description": "Work performed",
+        "requiresRecalibration": "Affects measurement: recalibration required"
+      }
+    },
+    "qualification": {
+      "new": "Record qualification",
+      "empty": "No qualifications.",
+      "fields": {
+        "code": "Code",
+        "equipment": "Equipment",
+        "phase": "Phase",
+        "protocolRef": "Protocol",
+        "executedAt": "Execution date",
+        "result": "Result",
+        "summary": "Summary",
+        "report": "Report",
+        "status": "Status",
+        "recordedBy": "Recorded by"
+      },
+      "approve": {
+        "title": "Approval (Quality Assurance)",
+        "approve": "Sign approval",
+        "reject": "Reject"
+      },
+      "download": "Download report"
+    },
+    "proficiency": {
+      "new": "Record proficiency test",
+      "empty": "No proficiency tests.",
+      "fields": {
+        "code": "Code",
+        "provider": "Provider",
+        "scheme": "Scheme",
+        "round": "Round",
+        "measurand": "Measurand",
+        "equipment": "Equipment (optional)",
+        "reportedValue": "Reported value (x)",
+        "assignedValue": "Assigned value (X)",
+        "sigma": "Proficiency σ",
+        "zScore": "z-score",
+        "reportDate": "Report date",
+        "outcome": "Outcome",
+        "comments": "Remarks"
+      },
+      "zHelp": "If you do not enter x, X and σ, type the z from the provider's report.",
+      "rule": "ISO 13528 criterion: |z| ≤ 2 satisfactory · 2 < |z| < 3 questionable · |z| ≥ 3 unsatisfactory.",
+      "capaRequired": "Unsatisfactory result: a CAPA is required.",
+      "createCapa": "Create CAPA",
+      "linkedCapas": "Linked CAPAs"
+    },
+    "referenceStandards": {
+      "empty": "No reference standards recorded."
     }
   }
 }
