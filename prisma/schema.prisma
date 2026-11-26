@@ -1,0 +1,120 @@
+// Fuente de verdad del modelo de datos. Proveedor de producción: PostgreSQL.
+// Para desarrollo con SQLite, `npm run db:generate` crea prisma/generated/sqlite/schema.prisma
+// cambiando solo el proveedor. No usar tipos nativos @db.* ni arrays escalares.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN_EMPRESA
+  USUARIO
+}
+
+enum Status {
+  ACTIVE
+  SUSPENDED
+}
+
+enum ResetStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+/// Empresa (tenant). `code` es el "ID corporativo" del login.
+model Organization {
+  id                 String   @id @default(cuid())
+  code               String   @unique
+  name               String
+  taxId              String?
+  status             Status   @default(ACTIVE)
+  locale             String   @default("es")
+  timezone           String   @default("America/Guayaquil")
+  passwordMaxAgeDays Int      @default(90)
+  sessionIdleMinutes Int      @default(15)
+  isPlatform         Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  users         User[]
+  resetRequests PasswordResetRequest[]
+  auditLogs     AuditLog[]
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  organizationId     String
+  username           String
+  fullName           String
+  email              String?
+  jobTitle           String?
+  passwordHash       String
+  /// Últimos hashes de contraseña (array JSON de strings) para impedir su reutilización.
+  passwordHistory    Json?
+  role               Role      @default(USUARIO)
+  status             Status    @default(ACTIVE)
+  locale             String?
+  mustChangePassword Boolean   @default(false)
+  failedLoginCount   Int       @default(0)
+  lockedUntil        DateTime?
+  lastLoginAt        DateTime?
+  passwordChangedAt  DateTime  @default(now())
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  organization  Organization           @relation(fields: [organizationId], references: [id])
+  resetRequests PasswordResetRequest[]
+
+  @@unique([organizationId, username])
+  @@index([organizationId])
+}
+
+model PasswordResetRequest {
+  id             String      @id @default(cuid())
+  organizationId String
+  userId         String
+  status         ResetStatus @default(PENDING)
+  note           String?
+  requestIp      String?
+  resolvedById   String?
+  resolvedAt     DateTime?
+  resolutionNote String?
+  expiresAt      DateTime
+  createdAt      DateTime    @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@index([organizationId, status])
+  @@index([userId, status])
+}
+
+/// Registro de auditoría GMP. Solo inserción: nunca se actualiza ni se borra.
+model AuditLog {
+  id             String   @id @default(cuid())
+  organizationId String?
+  actorId        String?
+  actorName      String?
+  action         String
+  entityType     String?
+  entityId       String?
+  before         Json?
+  after          Json?
+  reason         String?
+  ip             String?
+  userAgent      String?
+  createdAt      DateTime @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId, createdAt])
+  @@index([entityType, entityId])
+}

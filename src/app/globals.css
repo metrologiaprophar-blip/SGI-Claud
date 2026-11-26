@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+/* Paleta PROPHAR: primario #5A248C (brand-700). */
+@theme {
+  --font-sans: "Inter", "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --color-brand-50: #f7f2fc;
+  --color-brand-100: #eee3f8;
+  --color-brand-200: #dcc6f0;
+  --color-brand-300: #c29de3;
+  --color-brand-400: #a06ccf;
+  --color-brand-500: #8247b7;
+  --color-brand-600: #6c329f;
+  --color-brand-700: #5a248c;
+  --color-brand-800: #4a1e73;
+  --color-brand-900: #3c1a5d;
+  --color-brand-950: #250c3d;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background: var(--color-slate-50);
+  color: var(--color-slate-900);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
