@@ -4,12 +4,12 @@ import { useTranslations } from "next-intl";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { acknowledgeReadAction } from "../actions";
-import { SignaturePassword } from "./signature-password";
-import { useDocForm } from "./use-doc-form";
+import { SignaturePassword } from "@/components/forms/signature-password";
+import { useServiceForm } from "@/lib/use-service-form";
 
 export function ReadAckForm({ versionId, documentId }: { versionId: string; documentId: string }) {
   const t = useTranslations("documents");
-  const f = useDocForm(acknowledgeReadAction);
+  const f = useServiceForm(acknowledgeReadAction);
   return (
     <form {...f.formProps} className="space-y-3">
       <input type="hidden" name="versionId" value={versionId} />

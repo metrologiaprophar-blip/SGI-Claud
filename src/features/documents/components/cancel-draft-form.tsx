@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Field, Textarea } from "@/components/ui/field";
 import { Modal } from "@/components/ui/modal";
 import { cancelDraftAction } from "../actions";
-import { useDocForm } from "./use-doc-form";
+import { useServiceForm } from "@/lib/use-service-form";
 
 function CancelForm({ versionId, documentId }: { versionId: string; documentId: string }) {
   const t = useTranslations("documents");
-  const f = useDocForm(cancelDraftAction);
+  const f = useServiceForm(cancelDraftAction);
   return (
     <form {...f.formProps} className="space-y-3">
       <input type="hidden" name="versionId" value={versionId} />

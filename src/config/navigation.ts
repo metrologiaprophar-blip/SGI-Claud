@@ -5,7 +5,7 @@ import type { Role } from "@prisma/client";
  * - `key`: clave i18n bajo `nav.tools.<key>` (título) y `nav.toolDescriptions.<key>`.
  * - `phase`: fase del roadmap; las herramientas con phase > CURRENT_PHASE muestran "Próximamente".
  */
-export const CURRENT_PHASE = 2;
+export const CURRENT_PHASE = 3;
 
 export type NavTool = { key: string; slug: string; phase: number; standards: Standard[] };
 export type NavArea = {

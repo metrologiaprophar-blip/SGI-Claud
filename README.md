@@ -8,6 +8,10 @@ Plataforma web para el Sistema de Gestión Integrado de PROPHAR: BPM/GMP farmac�
 
 ## Estado
 
+**Fase 3 (Calidad GMP) completada:** desviaciones (detección → clasificación → investigación → cierre),
+CAPA con plan aprobado y verificación de eficacia, y control de cambios con evaluación de impacto y riesgo
+(incluida la notificación a ARCSA). Detalle en `PRD.md §14`.
+
 **Fase 2 (control documental GMP) completada:** listado maestro y listas por tipo, versiones,
 revisión y aprobación con firma electrónica, lectura obligatoria, bandeja de revisión, mis firmas y
 descargas protegidas con verificación SHA-256. Detalle en `PRD.md §13`.
@@ -59,7 +63,8 @@ Abre http://localhost:3000 e ingresa con:
 | `PROPHAR` | `metrologia` | `ChangeMe!2026` |
 | `PROPHAR` | `calidad` | `ChangeMe!2026` |
 
-Para probar el circuito documental: `metrologia` elabora un documento, `calidad` lo revisa y `admin` lo aprueba.
+Para probar los circuitos: `metrologia` elabora documentos y reporta o investiga desviaciones; `calidad` revisa
+documentos y actúa como Garantía de Calidad; `admin` aprueba documentos y también tiene permiso de QA.
 
 En el primer acceso el sistema pide cambiar la contraseña. Para definir otras claves iniciales, usa
 `SEED_ADMIN_PASSWORD` y `SEED_SUPERADMIN_PASSWORD` en `.env` antes de `npm run db:setup`.

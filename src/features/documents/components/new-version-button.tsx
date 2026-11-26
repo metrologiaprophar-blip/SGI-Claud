@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Field, Textarea } from "@/components/ui/field";
 import { Modal } from "@/components/ui/modal";
 import { createNewVersionAction } from "../actions";
-import { useDocForm } from "./use-doc-form";
+import { useServiceForm } from "@/lib/use-service-form";
 
 function NewVersionForm({ documentId, onDone }: { documentId: string; onDone: () => void }) {
   const t = useTranslations("documents.detail");
-  const f = useDocForm(createNewVersionAction);
+  const f = useServiceForm(createNewVersionAction);
   useEffect(() => {
     if (f.done) onDone();
   }, [f.done, onDone]);

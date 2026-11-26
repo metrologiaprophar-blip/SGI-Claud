@@ -61,7 +61,7 @@ La arquitectura es multiempresa (SaaS), aunque el primer y principal cliente es 
 |---|---|
 | **F1 — Núcleo** | Portal de acceso, autenticación, multiempresa, roles, registro de auditoría preparado para GMP, restablecimiento de clave por aprobación, barra superior por áreas, inicio, administración de usuarios, PWA, ES/EN/PT. **(Este plan)** |
 | F2 — Documentos GMP ✅ | Listado maestro, POE/SOP, especificaciones, registros; versiones; revisión y aprobación con **firma electrónica**; lectura obligatoria; aviso de copia no controlada. Detalle en §13. |
-| F3 — Calidad GMP | **Desviaciones**, **CAPA**, **Control de cambios**, con evaluación de riesgo e impacto. |
+| F3 — Calidad GMP ✅ | **Desviaciones**, **CAPA**, **Control de cambios**, con evaluación de riesgo e impacto. Detalle en §14. |
 | F4 — Metrología y laboratorio | Inventario de equipos e instrumentos, plan y certificados de **calibración**, verificaciones intermedias, **calificación IQ/OQ/PQ**, mantenimiento, equipos fuera de servicio y evaluación de impacto. **ISO/IEC 17025**: patrones y materiales de referencia con trazabilidad, estimación de incertidumbre, validación/verificación de métodos, ensayos de aptitud e interlaboratorios, informes y certificados. |
 | F5 — Almacén y distribución (BPADT) | Áreas y ubicaciones, **monitoreo de temperatura y humedad**, mapeo térmico, **excursiones**, recepción y cuarentena, despacho y transporte, cadena de frío, devoluciones, productos sospechosos/falsificados, **retiros de mercado y simulacros**. |
 | F6 — Auditorías, proveedores, quejas y capacitación | Plan anual, **autoinspecciones GMP/BPADT** con checklist y puntuación, auditorías a proveedores, inspecciones de la autoridad; calificación de proveedores y clientes; **quejas de producto**; matriz y registros de **capacitación**. |
@@ -389,7 +389,56 @@ Un borrador que no sigue adelante se **anula** con motivo; nunca se borra.
 - Administración del mapa de procesos desde la aplicación (hoy viene del seed).
 - Almacenamiento de archivos en un servicio de objetos (S3/Azure) para varias instancias.
 
-## 14. Preguntas abiertas
+## 14. Fase 3 — Calidad GMP (implementada)
+
+Permiso nuevo: `QA_APPROVE` (Garantía de Calidad). Numeración correlativa por empresa y año:
+`DEV-2026-0001`, `CAPA-2026-0001`, `CC-2026-0001`.
+
+### Desviaciones (5 pasos)
+
+| Paso | Quién | Qué | Firma |
+|---|---|---|---|
+| 1. Detección | Cualquier usuario | Descripción, categoría, proceso, lotes afectados, **acción inmediata (contención)**. La fecha no puede ser futura. | — |
+| 2. Clasificación | QA | Menor / mayor / crítica, investigador y plazo (15 días si es crítica, 30 si no). Indica si exige CAPA; una crítica siempre la exige. Un reporte que no es desviación se anula con motivo. | — |
+| 3. Investigación | Investigador | Método (5 porqués, Ishikawa, árbol de fallas), causa raíz, impacto en el producto, disposición y conclusión. Puede crear CAPA vinculadas. | **Elaboró** |
+| 4. Revisión QA | QA (no el investigador) | Aprueba el cierre o devuelve la investigación con comentario. | **Aprobó / Rechazó** |
+| 5. Cierre | — | Cerrada, con sus CAPA vinculadas. | — |
+
+### CAPA
+
+Origen: desviación, auditoría, queja, control de cambios, revisión por la dirección, riesgos, OOS o
+inspección. La crea QA, o el investigador si nace de su desviación.
+
+1. **Plan:** se definen acciones con responsable y plazo.
+2. **Aprobación:** QA firma el plan **Aprobó**, o lo devuelve. Quien aprueba no puede ser el responsable de la CAPA.
+3. **Ejecución:** cada responsable registra la ejecución con su evidencia. QA puede anular acciones con motivo.
+4. **Eficacia:** con todas las acciones cerradas, el responsable solicita la verificación. QA (no el responsable)
+   firma **Verificó** y la CAPA se cierra. Si no fue eficaz, vuelve a ejecución con nuevas acciones.
+
+### Control de cambios
+
+1. **Propuesta:** cualquier usuario la registra (tipo, proceso, descripción, justificación, elementos afectados,
+   fecha prevista) y la firma **Elaboró**.
+2. **Evaluación:** QA (no el solicitante) registra clasificación, nivel de riesgo, **si requiere notificación a
+   ARCSA**, e impacto en calidad, validación, documentos y capacitación. Define también las acciones de implementación.
+3. **Decisión:** QA aprueba (**Aprobó**), devuelve al solicitante o rechaza definitivamente, con motivo.
+4. **Implementación:** se ejecutan las acciones con evidencia y el solicitante declara el cambio implementado.
+5. **Cierre:** QA verifica la implementación y su eficacia (**Verificó**).
+
+### Común
+
+- Bandeja **"Mis pendientes de calidad"** en el área Calidad GMP y contador en Inicio.
+- Todo cambio de estado queda en el registro de auditoría con valor anterior, valor nuevo y motivo.
+  Los registros no se borran: se anulan con motivo.
+
+### Pendiente para fases posteriores
+
+- Adjuntar archivos de evidencia (hoy la evidencia es texto).
+- Avisos por correo de plazos vencidos.
+- Vincular un control de cambios con los documentos que actualiza (fase 2) y generar la CAPA desde auditorías y
+  quejas cuando existan esos módulos (fase 6).
+
+## 15. Preguntas abiertas
 
 - Orden de las fases F2–F8; propuesta: F2 Documentos → F3 Calidad GMP → F4 Metrología → F5 BPADT.
 - Formato de los dataloggers de temperatura (exportan CSV, API, ninguno).

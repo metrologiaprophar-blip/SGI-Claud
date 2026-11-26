@@ -277,7 +277,8 @@
     "areasTitle": "Áreas del sistema",
     "phaseNotice": "Fase 1: núcleo de la plataforma. Los módulos GMP se habilitarán por fases.",
     "toolsAvailable": "{count, plural, =0 {Próximamente} one {# herramienta disponible} other {# herramientas disponibles}}",
-    "docInbox": "Pendientes documentales"
+    "docInbox": "Pendientes documentales",
+    "qualityInbox": "Pendientes de calidad"
   },
   "admin": {
     "users": {
@@ -304,7 +305,8 @@
       "permissions": "Permisos GMP",
       "perm": {
         "DOC_MANAGE": "Control documental: crear documentos y nuevas versiones",
-        "DOC_APPROVE": "Aprobar documentos y declararlos obsoletos"
+        "DOC_APPROVE": "Aprobar documentos y declararlos obsoletos",
+        "QA_APPROVE": "Garantía de Calidad: clasificar y cerrar desviaciones, aprobar y verificar CAPA y cambios"
       }
     },
     "resets": {
@@ -417,6 +419,47 @@
       "read": "Firma: lectura",
       "obsoleted": "Firma: obsoleto",
       "failed": "Firma fallida (contraseña)"
+    },
+    "deviation": {
+      "report": "Desviación reportada",
+      "triage": "Desviación clasificada",
+      "dismiss": "Reporte anulado (no es desviación)",
+      "investigation": {
+        "save": "Investigación actualizada",
+        "submit": "Investigación enviada a QA"
+      },
+      "return": "Investigación devuelta",
+      "close": "Desviación cerrada"
+    },
+    "capa": {
+      "create": "CAPA registrada",
+      "plan_approve": "Plan CAPA aprobado",
+      "plan_return": "Plan CAPA devuelto",
+      "effectiveness_request": "Verificación de eficacia solicitada",
+      "close": "CAPA cerrada (eficaz)",
+      "not_effective": "CAPA no eficaz",
+      "cancel": "CAPA anulada"
+    },
+    "change": {
+      "create": "Cambio propuesto",
+      "update": "Cambio modificado",
+      "submit": "Cambio enviado a evaluación",
+      "assessment": {
+        "save": "Evaluación de cambio guardada"
+      },
+      "approve": "Cambio aprobado",
+      "return": "Cambio devuelto",
+      "reject": "Cambio rechazado",
+      "implemented": "Cambio implementado",
+      "close": "Cambio cerrado",
+      "cancel": "Cambio anulado"
+    },
+    "quality": {
+      "action": {
+        "create": "Acción añadida",
+        "complete": "Acción ejecutada",
+        "cancel": "Acción anulada"
+      }
     }
   },
   "auditGroups": {
@@ -425,7 +468,11 @@
     "password_reset": "Solicitudes de clave",
     "organization": "Empresa",
     "document": "Documentos",
-    "signature": "Firmas electrónicas"
+    "signature": "Firmas electrónicas",
+    "deviation": "Desviaciones",
+    "capa": "CAPA",
+    "change": "Control de cambios",
+    "quality": "Acciones de calidad"
   },
   "errors": {
     "unexpected": "Ocurrió un error inesperado. Inténtelo de nuevo.",
@@ -465,7 +512,20 @@
     "version_state_changed": "La versión cambió de estado mientras firmaba. Recargue la página.",
     "already_acknowledged": "Ya confirmó la lectura de esta versión.",
     "version_not_effective": "La versión no está vigente.",
-    "file_integrity_error": "El archivo no coincide con su huella registrada. Avise a Garantía de Calidad."
+    "file_integrity_error": "El archivo no coincide con su huella registrada. Avise a Garantía de Calidad.",
+    "invalid_state": "La acción no está permitida en el estado actual del registro.",
+    "invalid_date": "Fecha no válida.",
+    "date_in_past": "La fecha no puede ser anterior a hoy.",
+    "date_in_future": "La fecha no puede ser posterior a hoy.",
+    "required_fields": "Complete los campos obligatorios.",
+    "investigation_incomplete": "Complete método, causa raíz, evaluación de impacto y conclusión antes de enviar.",
+    "capa_required": "Esta desviación exige al menos una CAPA vinculada.",
+    "deviation_required": "Seleccione la desviación de origen.",
+    "actions_required": "El plan necesita al menos una acción pendiente.",
+    "actions_pending": "Aún hay acciones pendientes.",
+    "effectiveness_result_required": "Describa el resultado de la verificación (mínimo 10 caracteres).",
+    "assessment_incomplete": "Complete la evaluación (clasificación, riesgo, notificación e impacto) antes de aprobar.",
+    "evidence_required": "Describa la evidencia (mínimo 5 caracteres)."
   },
   "fieldErrors": {
     "required": "Obligatorio.",
@@ -508,7 +568,8 @@
       "APPROVED": "Aprobó",
       "REJECTED": "Rechazó",
       "READ": "Leído y comprendido",
-      "OBSOLETED": "Declaró obsoleto"
+      "OBSOLETED": "Declaró obsoleto",
+      "VERIFIED": "Verificó"
     },
     "list": {
       "new": "Nuevo documento",
@@ -643,6 +704,305 @@
       "meaning": "Significado",
       "record": "Registro",
       "comment": "Comentario"
+    }
+  },
+  "quality": {
+    "classification": {
+      "MINOR": "Menor",
+      "MAJOR": "Mayor",
+      "CRITICAL": "Crítica"
+    },
+    "riskLevel": {
+      "LOW": "Bajo",
+      "MEDIUM": "Medio",
+      "HIGH": "Alto"
+    },
+    "actionStatus": {
+      "PENDING": "Pendiente",
+      "DONE": "Ejecutada",
+      "CANCELLED": "Anulada"
+    },
+    "common": {
+      "code": "Código",
+      "title": "Título",
+      "status": "Estado",
+      "owner": "Responsable",
+      "dueDate": "Plazo",
+      "overdue": "Vencido",
+      "open": "Abiertos",
+      "all": "Todos",
+      "mine": "Míos",
+      "search": "Buscar por código o título",
+      "empty": "No hay registros para los filtros seleccionados.",
+      "count": "{count, plural, one {# registro} other {# registros}}",
+      "signatures": "Firmas electrónicas",
+      "cancel": "Anular",
+      "cancelTitle": "Anular el registro",
+      "reason": "Motivo",
+      "comment": "Comentario",
+      "commentHelp": "Obligatorio si devuelve o rechaza (mínimo 5 caracteres).",
+      "process": "Proceso",
+      "created": "Registrado",
+      "back": "Volver al listado",
+      "cancelled": "Anulado: {reason}",
+      "saved": "Cambios guardados"
+    },
+    "actions": {
+      "title": "Plan de acción",
+      "add": "Añadir acción",
+      "description": "Acción",
+      "responsible": "Responsable",
+      "dueDate": "Plazo",
+      "evidence": "Evidencia",
+      "complete": "Registrar ejecución",
+      "completeEvidence": "Evidencia de la ejecución",
+      "cancel": "Anular acción",
+      "empty": "Aún no hay acciones.",
+      "progress": "{done} de {total} acciones cerradas",
+      "status": "Estado"
+    },
+    "inbox": {
+      "title": "Mis pendientes de calidad",
+      "empty": "No tiene pendientes de calidad.",
+      "toTriage": "Desviaciones por clasificar",
+      "toInvestigate": "Desviaciones a investigar",
+      "devToClose": "Desviaciones por cerrar",
+      "capaToApprove": "Planes CAPA por aprobar",
+      "capaToVerify": "CAPA por verificar eficacia",
+      "capaReady": "Mis CAPA listas para verificación",
+      "myActions": "Mis acciones pendientes",
+      "changesToAssess": "Cambios por evaluar",
+      "changesToClose": "Cambios por cerrar",
+      "myDrafts": "Mis cambios en borrador"
+    },
+    "deviation": {
+      "status": {
+        "REPORTED": "Reportada",
+        "UNDER_INVESTIGATION": "En investigación",
+        "PENDING_QA": "Pendiente de QA",
+        "CLOSED": "Cerrada",
+        "CANCELLED": "Anulada"
+      },
+      "category": {
+        "PROCESS": "Proceso de fabricación",
+        "EQUIPMENT": "Equipo",
+        "MATERIAL": "Material / materia prima",
+        "DOCUMENTATION": "Documentación",
+        "ENVIRONMENT": "Condiciones ambientales",
+        "PERSONNEL": "Personal",
+        "STORAGE_TRANSPORT": "Almacenamiento y transporte",
+        "LABORATORY": "Laboratorio",
+        "COMPUTERIZED_SYSTEM": "Sistema computarizado",
+        "OTHER": "Otra"
+      },
+      "rootCauseMethod": {
+        "FIVE_WHYS": "5 porqués",
+        "ISHIKAWA": "Ishikawa (6M)",
+        "FAULT_TREE": "Árbol de fallas",
+        "OTHER": "Otro"
+      },
+      "steps": {
+        "detection": "Detección",
+        "triage": "Clasificación",
+        "investigation": "Investigación",
+        "review": "Revisión QA",
+        "closure": "Cierre"
+      },
+      "new": "Reportar desviación",
+      "fields": {
+        "title": "Título",
+        "description": "Descripción de lo ocurrido",
+        "category": "Categoría",
+        "process": "Proceso",
+        "location": "Lugar / equipo",
+        "detectedAt": "Fecha de detección",
+        "batches": "Lotes afectados",
+        "immediateAction": "Acción inmediata (contención)",
+        "reportedBy": "Reportó",
+        "investigator": "Investigador",
+        "classification": "Clasificación",
+        "dueDate": "Plazo de investigación",
+        "capaRequired": "Requiere CAPA",
+        "triageComment": "Comentario de QA",
+        "rootCauseMethod": "Método de análisis",
+        "rootCause": "Causa raíz",
+        "impactAssessment": "Evaluación del impacto en la calidad del producto",
+        "productDisposition": "Disposición del producto",
+        "conclusion": "Conclusión"
+      },
+      "triage": {
+        "title": "Clasificación (Garantía de Calidad)",
+        "submit": "Clasificar y asignar",
+        "dueHelp": "Si lo deja vacío: 15 días (crítica) o 30 días (mayor o menor).",
+        "criticalNote": "Una desviación crítica siempre exige CAPA.",
+        "dismiss": "No es una desviación",
+        "dismissHelp": "El reporte queda anulado con su motivo."
+      },
+      "investigation": {
+        "title": "Investigación",
+        "save": "Guardar avance",
+        "submit": "Firmar y enviar a QA",
+        "submitTitle": "Enviar a revisión de QA",
+        "capaHint": "Esta desviación exige al menos una CAPA vinculada antes de enviarla.",
+        "newCapa": "Crear CAPA vinculada"
+      },
+      "review": {
+        "title": "Revisión y cierre (Garantía de Calidad)",
+        "approve": "Firmar cierre",
+        "reject": "Devolver la investigación"
+      },
+      "returned": "Devuelta por QA",
+      "linkedCapas": "CAPA vinculadas",
+      "waiting": "Esperando la acción de {name}.",
+      "waitingQa": "Esperando la revisión de Garantía de Calidad.",
+      "detection": "Detección",
+      "investigationData": "Datos de la investigación"
+    },
+    "capa": {
+      "status": {
+        "OPEN": "Plan en elaboración",
+        "IN_PROGRESS": "En ejecución",
+        "EFFECTIVENESS_CHECK": "Verificación de eficacia",
+        "CLOSED": "Cerrada",
+        "CANCELLED": "Anulada"
+      },
+      "source": {
+        "DEVIATION": "Desviación",
+        "AUDIT": "Auditoría",
+        "COMPLAINT": "Queja",
+        "CHANGE_CONTROL": "Control de cambios",
+        "MANAGEMENT_REVIEW": "Revisión por la dirección",
+        "RISK": "Gestión de riesgos",
+        "OOS": "OOS / OOT",
+        "INSPECTION": "Inspección de la autoridad",
+        "OTHER": "Otro"
+      },
+      "type": {
+        "CORRECTIVE": "Correctiva",
+        "PREVENTIVE": "Preventiva",
+        "BOTH": "Correctiva y preventiva"
+      },
+      "steps": {
+        "plan": "Plan",
+        "approval": "Aprobación",
+        "execution": "Ejecución",
+        "effectiveness": "Eficacia",
+        "closure": "Cierre"
+      },
+      "new": "Nueva CAPA",
+      "fields": {
+        "title": "Título",
+        "source": "Origen",
+        "deviation": "Desviación de origen",
+        "sourceReference": "Referencia del origen",
+        "problemStatement": "Descripción del problema",
+        "rootCause": "Causa raíz",
+        "type": "Tipo",
+        "owner": "Responsable de la CAPA",
+        "effectivenessCriteria": "Criterio de eficacia",
+        "targetDate": "Fecha objetivo",
+        "effectivenessDueDate": "Fecha prevista de verificación",
+        "effectivenessResult": "Resultado de la verificación"
+      },
+      "plan": {
+        "title": "Aprobación del plan (Garantía de Calidad)",
+        "approve": "Firmar aprobación del plan",
+        "reject": "Devolver el plan",
+        "needsActions": "Añada al menos una acción antes de aprobar el plan."
+      },
+      "request": {
+        "title": "Solicitar verificación de eficacia",
+        "help": "Todas las acciones están cerradas. Solicite a QA la verificación de eficacia.",
+        "submit": "Solicitar verificación"
+      },
+      "verify": {
+        "title": "Verificación de eficacia (Garantía de Calidad)",
+        "effective": "Firmar: eficaz y cerrar",
+        "notEffective": "No eficaz: volver a ejecución",
+        "help": "Describa la evidencia que demuestra, o no, la eficacia según el criterio definido."
+      },
+      "returned": "Observación de QA",
+      "fromDeviation": "Origen: {code}",
+      "data": "Datos de la CAPA"
+    },
+    "change": {
+      "status": {
+        "DRAFT": "Borrador",
+        "IN_ASSESSMENT": "En evaluación",
+        "APPROVED": "Aprobado",
+        "IMPLEMENTED": "Implementado",
+        "CLOSED": "Cerrado",
+        "REJECTED": "Rechazado",
+        "CANCELLED": "Anulado"
+      },
+      "type": {
+        "PROCESS": "Proceso",
+        "EQUIPMENT": "Equipo",
+        "FACILITY": "Instalaciones",
+        "DOCUMENT": "Documento",
+        "SUPPLIER": "Proveedor",
+        "MATERIAL": "Material",
+        "COMPUTERIZED_SYSTEM": "Sistema computarizado",
+        "ANALYTICAL_METHOD": "Método analítico",
+        "PRODUCT": "Producto / registro sanitario",
+        "STORAGE_DISTRIBUTION": "Almacenamiento y distribución",
+        "OTHER": "Otro"
+      },
+      "steps": {
+        "proposal": "Propuesta",
+        "assessment": "Evaluación",
+        "approved": "Aprobación",
+        "implementation": "Implementación",
+        "closure": "Cierre"
+      },
+      "new": "Proponer cambio",
+      "fields": {
+        "title": "Título",
+        "description": "Descripción del cambio",
+        "justification": "Justificación",
+        "changeType": "Tipo de cambio",
+        "process": "Proceso",
+        "affectedItems": "Elementos afectados (documentos, equipos, productos…)",
+        "plannedDate": "Fecha prevista",
+        "requester": "Solicitante",
+        "classification": "Clasificación",
+        "riskLevel": "Nivel de riesgo",
+        "regulatoryNotification": "Requiere notificación a ARCSA",
+        "impactQuality": "Impacto en la calidad del producto",
+        "impactValidation": "Impacto en validación / calificación",
+        "impactDocuments": "Documentos a actualizar",
+        "impactTraining": "Capacitación necesaria",
+        "assessmentComment": "Comentario de QA",
+        "closureComment": "Verificación de la implementación"
+      },
+      "draft": {
+        "title": "Propuesta",
+        "save": "Guardar cambios",
+        "submit": "Firmar y enviar a evaluación",
+        "submitTitle": "Enviar a evaluación"
+      },
+      "assessment": {
+        "title": "Evaluación de impacto y riesgo (Garantía de Calidad)",
+        "save": "Guardar evaluación",
+        "decisionTitle": "Decisión de QA",
+        "approve": "Firmar aprobación",
+        "return": "Devolver al solicitante",
+        "reject": "Rechazar",
+        "yes": "Sí",
+        "no": "No"
+      },
+      "implement": {
+        "title": "Implementación",
+        "help": "Cuando todas las acciones estén cerradas, declare el cambio implementado.",
+        "submit": "Declarar implementado"
+      },
+      "close": {
+        "title": "Cierre (Garantía de Calidad)",
+        "submit": "Firmar verificación y cerrar"
+      },
+      "returned": "Comentario de QA",
+      "data": "Datos del cambio",
+      "assessmentData": "Evaluación"
     }
   }
 }

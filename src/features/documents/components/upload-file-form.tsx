@@ -5,7 +5,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, inputClass } from "@/components/ui/field";
 import { uploadFileAction } from "../actions";
-import { useDocForm } from "./use-doc-form";
+import { useServiceForm } from "@/lib/use-service-form";
 
 export function UploadFileForm({
   versionId,
@@ -17,7 +17,7 @@ export function UploadFileForm({
   hasFile: boolean;
 }) {
   const t = useTranslations("documents.upload");
-  const f = useDocForm(uploadFileAction);
+  const f = useServiceForm(uploadFileAction);
   return (
     <form {...f.formProps} className="space-y-3" encType="multipart/form-data">
       <input type="hidden" name="versionId" value={versionId} />

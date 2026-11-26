@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Field, Textarea } from "@/components/ui/field";
 import { Modal } from "@/components/ui/modal";
 import { obsoleteDocumentAction } from "../actions";
-import { SignaturePassword } from "./signature-password";
-import { useDocForm } from "./use-doc-form";
+import { SignaturePassword } from "@/components/forms/signature-password";
+import { useServiceForm } from "@/lib/use-service-form";
 
 function ObsoleteForm({ documentId }: { documentId: string }) {
   const t = useTranslations("documents");
-  const f = useDocForm(obsoleteDocumentAction);
+  const f = useServiceForm(obsoleteDocumentAction);
   return (
     <form {...f.formProps} className="space-y-3">
       <input type="hidden" name="documentId" value={documentId} />

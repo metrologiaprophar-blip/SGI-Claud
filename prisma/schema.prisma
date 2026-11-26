@@ -66,6 +66,103 @@ enum SignatureMeaning {
   REJECTED
   READ
   OBSOLETED
+  VERIFIED
+}
+
+enum Classification {
+  MINOR
+  MAJOR
+  CRITICAL
+}
+
+enum DeviationStatus {
+  REPORTED
+  UNDER_INVESTIGATION
+  PENDING_QA
+  CLOSED
+  CANCELLED
+}
+
+enum DeviationCategory {
+  PROCESS
+  EQUIPMENT
+  MATERIAL
+  DOCUMENTATION
+  ENVIRONMENT
+  PERSONNEL
+  STORAGE_TRANSPORT
+  LABORATORY
+  COMPUTERIZED_SYSTEM
+  OTHER
+}
+
+enum RootCauseMethod {
+  FIVE_WHYS
+  ISHIKAWA
+  FAULT_TREE
+  OTHER
+}
+
+enum CapaStatus {
+  OPEN
+  IN_PROGRESS
+  EFFECTIVENESS_CHECK
+  CLOSED
+  CANCELLED
+}
+
+enum CapaSource {
+  DEVIATION
+  AUDIT
+  COMPLAINT
+  CHANGE_CONTROL
+  MANAGEMENT_REVIEW
+  RISK
+  OOS
+  INSPECTION
+  OTHER
+}
+
+enum CapaType {
+  CORRECTIVE
+  PREVENTIVE
+  BOTH
+}
+
+enum ChangeStatus {
+  DRAFT
+  IN_ASSESSMENT
+  APPROVED
+  IMPLEMENTED
+  CLOSED
+  REJECTED
+  CANCELLED
+}
+
+enum ChangeType {
+  PROCESS
+  EQUIPMENT
+  FACILITY
+  DOCUMENT
+  SUPPLIER
+  MATERIAL
+  COMPUTERIZED_SYSTEM
+  ANALYTICAL_METHOD
+  PRODUCT
+  STORAGE_DISTRIBUTION
+  OTHER
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ActionStatus {
+  PENDING
+  DONE
+  CANCELLED
 }
 
 /// Empresa (tenant). `code` es el "ID corporativo" del login.
@@ -120,6 +217,12 @@ model User {
   authoredVersions DocumentVersion[] @relation("VersionAuthor")
   reviewVersions   DocumentVersion[] @relation("VersionReviewer")
   approveVersions  DocumentVersion[] @relation("VersionApprover")
+
+  reportedDeviations     Deviation[]     @relation("DeviationReporter")
+  investigatedDeviations Deviation[]     @relation("DeviationInvestigator")
+  ownedCapas             Capa[]          @relation("CapaOwner")
+  requestedChanges       ChangeControl[] @relation("ChangeRequester")
+  assignedActions        QualityAction[] @relation("ActionResponsible")
 
   @@unique([organizationId, username])
   @@index([organizationId])
@@ -176,8 +279,10 @@ model Process {
   active         Boolean  @default(true)
   createdAt      DateTime @default(now())
 
-  organization Organization @relation(fields: [organizationId], references: [id])
-  documents    Document[]
+  organization   Organization    @relation(fields: [organizationId], references: [id])
+  documents      Document[]
+  deviations     Deviation[]
+  changeControls ChangeControl[]
 
   @@unique([organizationId, code])
   @@index([organizationId])
@@ -291,4 +396,140 @@ model ReadAcknowledgement {
 
   @@unique([versionId, userId])
   @@index([organizationId, userId])
+}
+
+/// Desviación GMP/BPADT: detección → clasificación → investigación → cierre por Garantía de Calidad.
+model Deviation {
+  id                 String            @id @default(cuid())
+  organizationId     String
+  code               String
+  title              String
+  description        String
+  category           DeviationCategory
+  processId          String
+  location           String?
+  detectedAt         DateTime
+  reportedById       String
+  batches            String?
+  immediateAction    String
+  status             DeviationStatus   @default(REPORTED)
+  classification     Classification?
+  investigatorId     String?
+  dueDate            DateTime?
+  capaRequired       Boolean           @default(false)
+  triageComment      String?
+  rootCauseMethod    RootCauseMethod?
+  rootCause          String?
+  impactAssessment   String?
+  productDisposition String?
+  conclusion         String?
+  returnComment      String?
+  closedAt           DateTime?
+  closedById         String?
+  cancelReason       String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  process      Process @relation(fields: [processId], references: [id])
+  reportedBy   User    @relation("DeviationReporter", fields: [reportedById], references: [id])
+  investigator User?   @relation("DeviationInvestigator", fields: [investigatorId], references: [id])
+  capas        Capa[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, status])
+}
+
+/// Acción correctiva/preventiva con plan, seguimiento y verificación de eficacia.
+model Capa {
+  id                    String     @id @default(cuid())
+  organizationId        String
+  code                  String
+  title                 String
+  source                CapaSource
+  deviationId           String?
+  sourceReference       String?
+  problemStatement      String
+  rootCause             String?
+  type                  CapaType
+  ownerId               String
+  status                CapaStatus @default(OPEN)
+  effectivenessCriteria String
+  targetDate            DateTime
+  effectivenessDueDate  DateTime?
+  effectivenessResult   String?
+  returnComment         String?
+  verifiedById          String?
+  closedAt              DateTime?
+  cancelReason          String?
+  createdById           String
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+
+  deviation Deviation?      @relation(fields: [deviationId], references: [id])
+  owner     User            @relation("CapaOwner", fields: [ownerId], references: [id])
+  actions   QualityAction[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, status])
+}
+
+/// Control de cambios: propuesta → evaluación de impacto y riesgo → aprobación → implementación → cierre.
+model ChangeControl {
+  id                     String          @id @default(cuid())
+  organizationId         String
+  code                   String
+  title                  String
+  description            String
+  justification          String
+  changeType             ChangeType
+  processId              String
+  affectedItems          String?
+  plannedDate            DateTime?
+  requesterId            String
+  status                 ChangeStatus    @default(DRAFT)
+  classification         Classification?
+  riskLevel              RiskLevel?
+  regulatoryNotification Boolean?
+  impactQuality          String?
+  impactValidation       String?
+  impactDocuments        String?
+  impactTraining         String?
+  assessmentComment      String?
+  approvedById           String?
+  approvedAt             DateTime?
+  implementedAt          DateTime?
+  closureComment         String?
+  closedAt               DateTime?
+  cancelReason           String?
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+
+  process   Process         @relation(fields: [processId], references: [id])
+  requester User            @relation("ChangeRequester", fields: [requesterId], references: [id])
+  actions   QualityAction[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, status])
+}
+
+/// Acción de un plan (CAPA o control de cambios) con responsable, plazo y evidencia.
+model QualityAction {
+  id              String       @id @default(cuid())
+  organizationId  String
+  capaId          String?
+  changeControlId String?
+  description     String
+  responsibleId   String
+  dueDate         DateTime
+  status          ActionStatus @default(PENDING)
+  evidence        String?
+  completedAt     DateTime?
+  completedById   String?
+  createdAt       DateTime     @default(now())
+
+  capa          Capa?          @relation(fields: [capaId], references: [id])
+  changeControl ChangeControl? @relation(fields: [changeControlId], references: [id])
+  responsible   User           @relation("ActionResponsible", fields: [responsibleId], references: [id])
+
+  @@index([organizationId, responsibleId, status])
 }

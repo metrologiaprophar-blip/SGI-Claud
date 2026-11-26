@@ -54,19 +54,20 @@ async function seedProcesses(organizationId: string) {
   }
 }
 
-/** Asigna permisos GMP solo si el usuario aún no tiene ninguno (no pisa cambios hechos en la app). */
+/**
+ * Asegura los permisos GMP de referencia del seed (los añade si faltan, no quita ninguno).
+ * Ejecutar el seed de nuevo tras una actualización incorpora los permisos de módulos nuevos.
+ */
 async function grant(userId: string, permissions: string[]) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { permissions: true },
   });
-  if (
-    user &&
-    (user.permissions === null ||
-      (Array.isArray(user.permissions) && user.permissions.length === 0))
-  ) {
-    await prisma.user.update({ where: { id: userId }, data: { permissions } });
-  }
+  if (!user) return;
+  const current = Array.isArray(user.permissions) ? (user.permissions as string[]) : [];
+  const merged = [...new Set([...current, ...permissions])].sort();
+  if (merged.length !== current.length)
+    await prisma.user.update({ where: { id: userId }, data: { permissions: merged } });
 }
 
 async function upsertUser(
@@ -174,9 +175,10 @@ async function main() {
   const byName = (code: string, username: string) =>
     results.find(([c, r]) => c === code && r.user.username === username)?.[1].user.id;
   // Circuito documental de ejemplo: metrología elabora, calidad revisa, el jefe de GC aprueba.
-  await grant(byName("PROPHAR", "admin")!, ["DOC_MANAGE", "DOC_APPROVE"]);
+  await grant(byName("PROPHAR", "admin")!, ["DOC_MANAGE", "DOC_APPROVE", "QA_APPROVE"]);
   await grant(byName("PROPHAR", "metrologia")!, ["DOC_MANAGE"]);
-  await grant(byName("OTRA", "admin")!, ["DOC_MANAGE", "DOC_APPROVE"]);
+  await grant(byName("PROPHAR", "calidad")!, ["QA_APPROVE"]);
+  await grant(byName("OTRA", "admin")!, ["DOC_MANAGE", "DOC_APPROVE", "QA_APPROVE"]);
 
   console.log("\nSeed completado:");
   for (const [code, r] of results) {

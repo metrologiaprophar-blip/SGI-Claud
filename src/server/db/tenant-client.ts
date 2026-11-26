@@ -10,6 +10,10 @@ export const TENANT_MODELS = new Set([
   "DocumentVersion",
   "ElectronicSignature",
   "ReadAcknowledgement",
+  "Deviation",
+  "Capa",
+  "ChangeControl",
+  "QualityAction",
 ]);
 
 /** Modelos de solo inserción (integridad de datos GMP). */

@@ -7,7 +7,11 @@ import path from "node:path";
  * Para producción en varias instancias, sustituir por un almacén de objetos (S3, Azure Blob…)
  * manteniendo esta misma interfaz.
  */
-const ROOT = path.resolve(process.env.STORAGE_DIR ?? "storage");
+// Ruta de datos en tiempo de ejecución: se excluye del análisis de dependencias del empaquetador.
+const ROOT = path.resolve(
+  /* turbopackIgnore: true */ process.cwd(),
+  process.env.STORAGE_DIR ?? "storage",
+);
 
 export const MAX_FILE_BYTES = 20 * 1024 * 1024;
 

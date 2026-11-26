@@ -8,7 +8,7 @@ import { submitWithoutReset } from "@/lib/use-form-submit";
 type Action = (prev: ActionResult | null, formData: FormData) => Promise<ActionResult>;
 
 /** Estado común de los formularios del flujo documental. */
-export function useDocForm(action: Action) {
+export function useServiceForm(action: Action) {
   const [state, formAction, pending] = useActionState(action, null);
   const { formError, fieldError } = useActionMessages();
   return {

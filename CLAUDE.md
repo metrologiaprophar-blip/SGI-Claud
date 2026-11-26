@@ -59,6 +59,7 @@ src/
   components/ui/         # Button, Input, Modal, Table, Badge, Dropdown…
   components/layout/     # TopNav, AreaMenu, Breadcrumbs, LanguageSwitcher, InstallPwaButton, UserMenu
   features/<modulo>/     # service.ts (lógica testeable) · actions.ts ("use server") · components/
+                         # documents, deviations, capa, change-control, quality (compartido)
   server/
     db/client.ts         # PrismaClient singleton (uso restringido)
     db/tenant-client.ts  # createTenantClient(): extensión Prisma + TENANT_MODELS
@@ -160,6 +161,12 @@ una persona (`rm prisma/generated/sqlite/dev.db && npm run db:setup`).
     comprobación de empresa, permisos, SHA-256 y auditoría. Nunca servir `STORAGE_DIR` como estático.
 13. **Referencias entre registros** (revisor, proceso, lectores…): validarlas con el cliente de la empresa
     antes de guardarlas; un id de otra empresa debe resultar en `not_found`/`invalid_user`.
+14. **Formularios de flujos** (Calidad y siguientes): usar `ActionForm` (`src/components/forms/action-form.tsx`)
+    con Server Actions `(prev, formData) => ActionResult`, y `ModalButton` para abrirlos en un modal (se cierra
+    solo al terminar). Los campos pueden ser Server Components (`Field`, `Input`, `Select`, `Textarea`).
+15. **Registros de calidad**: código con `nextCode()` dentro de la transacción del alta y `withCodeRetry()`;
+    fechas "AAAA-MM-DD" con `parseDay()` (zona horaria de la empresa); las acciones de planes van en
+    `QualityAction` mediante `features/quality/actions-service.ts`.
 
 ## Convenciones de código
 
@@ -188,8 +195,9 @@ resuelve su propia solicitud de clave ni cambia su propio rol/estado.
 | `PROPHAR` | `calidad` | USUARIO | igual que el admin |
 | `OTRA` | `admin` | ADMIN_EMPRESA | igual (solo para pruebas de aislamiento) |
 
-Permisos GMP del seed: `admin` → `DOC_MANAGE` + `DOC_APPROVE`; `metrologia` → `DOC_MANAGE`.
-Circuito de ejemplo: metrología elabora, calidad revisa y admin aprueba.
+Permisos GMP del seed: `admin` → `DOC_MANAGE` + `DOC_APPROVE` + `QA_APPROVE`; `metrologia` → `DOC_MANAGE`;
+`calidad` → `QA_APPROVE`. Volver a ejecutar el seed añade los permisos de referencia que falten (no quita ninguno).
+Circuitos de ejemplo: metrología elabora/investiga, calidad revisa o verifica, admin aprueba.
 
 Solo para desarrollo: el seed se niega a ejecutarse en producción sin las variables definidas, y los
 usuarios sembrados deben cambiar la clave en el primer acceso salvo con `SEED_FORCE_PASSWORD_CHANGE=false`

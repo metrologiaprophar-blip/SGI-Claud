@@ -277,7 +277,8 @@
     "areasTitle": "System areas",
     "phaseNotice": "Phase 1: platform core. GMP modules will be enabled in phases.",
     "toolsAvailable": "{count, plural, =0 {Coming soon} one {# tool available} other {# tools available}}",
-    "docInbox": "Document tasks"
+    "docInbox": "Document tasks",
+    "qualityInbox": "Quality tasks"
   },
   "admin": {
     "users": {
@@ -304,7 +305,8 @@
       "permissions": "GMP permissions",
       "perm": {
         "DOC_MANAGE": "Document control: create documents and new versions",
-        "DOC_APPROVE": "Approve documents and declare them obsolete"
+        "DOC_APPROVE": "Approve documents and declare them obsolete",
+        "QA_APPROVE": "Quality Assurance: classify and close deviations, approve and verify CAPAs and changes"
       }
     },
     "resets": {
@@ -417,6 +419,47 @@
       "read": "Signature: read",
       "obsoleted": "Signature: obsolete",
       "failed": "Failed signature (password)"
+    },
+    "deviation": {
+      "report": "Deviation reported",
+      "triage": "Deviation classified",
+      "dismiss": "Report cancelled (not a deviation)",
+      "investigation": {
+        "save": "Investigation updated",
+        "submit": "Investigation sent to QA"
+      },
+      "return": "Investigation returned",
+      "close": "Deviation closed"
+    },
+    "capa": {
+      "create": "CAPA recorded",
+      "plan_approve": "CAPA plan approved",
+      "plan_return": "CAPA plan returned",
+      "effectiveness_request": "Effectiveness check requested",
+      "close": "CAPA closed (effective)",
+      "not_effective": "CAPA not effective",
+      "cancel": "CAPA cancelled"
+    },
+    "change": {
+      "create": "Change proposed",
+      "update": "Change modified",
+      "submit": "Change sent for assessment",
+      "assessment": {
+        "save": "Change assessment saved"
+      },
+      "approve": "Change approved",
+      "return": "Change returned",
+      "reject": "Change rejected",
+      "implemented": "Change implemented",
+      "close": "Change closed",
+      "cancel": "Change cancelled"
+    },
+    "quality": {
+      "action": {
+        "create": "Action added",
+        "complete": "Action completed",
+        "cancel": "Action cancelled"
+      }
     }
   },
   "auditGroups": {
@@ -425,7 +468,11 @@
     "password_reset": "Password requests",
     "organization": "Company",
     "document": "Documents",
-    "signature": "Electronic signatures"
+    "signature": "Electronic signatures",
+    "deviation": "Deviations",
+    "capa": "CAPA",
+    "change": "Change control",
+    "quality": "Quality actions"
   },
   "errors": {
     "unexpected": "An unexpected error occurred. Please try again.",
@@ -465,7 +512,20 @@
     "version_state_changed": "The version changed status while you were signing. Reload the page.",
     "already_acknowledged": "You already confirmed reading this version.",
     "version_not_effective": "The version is not effective.",
-    "file_integrity_error": "The file does not match its recorded fingerprint. Notify Quality Assurance."
+    "file_integrity_error": "The file does not match its recorded fingerprint. Notify Quality Assurance.",
+    "invalid_state": "This action is not allowed in the record's current status.",
+    "invalid_date": "Invalid date.",
+    "date_in_past": "The date cannot be earlier than today.",
+    "date_in_future": "The date cannot be later than today.",
+    "required_fields": "Fill in the required fields.",
+    "investigation_incomplete": "Complete method, root cause, impact assessment and conclusion before submitting.",
+    "capa_required": "This deviation requires at least one linked CAPA.",
+    "deviation_required": "Select the source deviation.",
+    "actions_required": "The plan needs at least one pending action.",
+    "actions_pending": "There are still pending actions.",
+    "effectiveness_result_required": "Describe the verification result (at least 10 characters).",
+    "assessment_incomplete": "Complete the assessment (classification, risk, notification and impact) before approving.",
+    "evidence_required": "Describe the evidence (at least 5 characters)."
   },
   "fieldErrors": {
     "required": "Required.",
@@ -508,7 +568,8 @@
       "APPROVED": "Approved",
       "REJECTED": "Rejected",
       "READ": "Read and understood",
-      "OBSOLETED": "Declared obsolete"
+      "OBSOLETED": "Declared obsolete",
+      "VERIFIED": "Verified"
     },
     "list": {
       "new": "New document",
@@ -643,6 +704,305 @@
       "meaning": "Meaning",
       "record": "Record",
       "comment": "Comment"
+    }
+  },
+  "quality": {
+    "classification": {
+      "MINOR": "Minor",
+      "MAJOR": "Major",
+      "CRITICAL": "Critical"
+    },
+    "riskLevel": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
+    "actionStatus": {
+      "PENDING": "Pending",
+      "DONE": "Done",
+      "CANCELLED": "Cancelled"
+    },
+    "common": {
+      "code": "Code",
+      "title": "Title",
+      "status": "Status",
+      "owner": "Owner",
+      "dueDate": "Due date",
+      "overdue": "Overdue",
+      "open": "Open",
+      "all": "All",
+      "mine": "Mine",
+      "search": "Search by code or title",
+      "empty": "No records match the selected filters.",
+      "count": "{count, plural, one {# record} other {# records}}",
+      "signatures": "Electronic signatures",
+      "cancel": "Cancel",
+      "cancelTitle": "Cancel the record",
+      "reason": "Reason",
+      "comment": "Comment",
+      "commentHelp": "Required when returning or rejecting (at least 5 characters).",
+      "process": "Process",
+      "created": "Recorded",
+      "back": "Back to list",
+      "cancelled": "Cancelled: {reason}",
+      "saved": "Changes saved"
+    },
+    "actions": {
+      "title": "Action plan",
+      "add": "Add action",
+      "description": "Action",
+      "responsible": "Responsible",
+      "dueDate": "Due date",
+      "evidence": "Evidence",
+      "complete": "Record completion",
+      "completeEvidence": "Completion evidence",
+      "cancel": "Cancel action",
+      "empty": "No actions yet.",
+      "progress": "{done} of {total} actions closed",
+      "status": "Status"
+    },
+    "inbox": {
+      "title": "My quality tasks",
+      "empty": "You have no quality tasks.",
+      "toTriage": "Deviations to classify",
+      "toInvestigate": "Deviations to investigate",
+      "devToClose": "Deviations to close",
+      "capaToApprove": "CAPA plans to approve",
+      "capaToVerify": "CAPAs to verify effectiveness",
+      "capaReady": "My CAPAs ready for verification",
+      "myActions": "My pending actions",
+      "changesToAssess": "Changes to assess",
+      "changesToClose": "Changes to close",
+      "myDrafts": "My draft changes"
+    },
+    "deviation": {
+      "status": {
+        "REPORTED": "Reported",
+        "UNDER_INVESTIGATION": "Under investigation",
+        "PENDING_QA": "Pending QA",
+        "CLOSED": "Closed",
+        "CANCELLED": "Cancelled"
+      },
+      "category": {
+        "PROCESS": "Manufacturing process",
+        "EQUIPMENT": "Equipment",
+        "MATERIAL": "Material / raw material",
+        "DOCUMENTATION": "Documentation",
+        "ENVIRONMENT": "Environmental conditions",
+        "PERSONNEL": "Personnel",
+        "STORAGE_TRANSPORT": "Storage and transport",
+        "LABORATORY": "Laboratory",
+        "COMPUTERIZED_SYSTEM": "Computerized system",
+        "OTHER": "Other"
+      },
+      "rootCauseMethod": {
+        "FIVE_WHYS": "5 whys",
+        "ISHIKAWA": "Ishikawa (6M)",
+        "FAULT_TREE": "Fault tree",
+        "OTHER": "Other"
+      },
+      "steps": {
+        "detection": "Detection",
+        "triage": "Classification",
+        "investigation": "Investigation",
+        "review": "QA review",
+        "closure": "Closure"
+      },
+      "new": "Report deviation",
+      "fields": {
+        "title": "Title",
+        "description": "Description of what happened",
+        "category": "Category",
+        "process": "Process",
+        "location": "Location / equipment",
+        "detectedAt": "Detection date",
+        "batches": "Affected batches",
+        "immediateAction": "Immediate action (containment)",
+        "reportedBy": "Reported by",
+        "investigator": "Investigator",
+        "classification": "Classification",
+        "dueDate": "Investigation due date",
+        "capaRequired": "CAPA required",
+        "triageComment": "QA comment",
+        "rootCauseMethod": "Analysis method",
+        "rootCause": "Root cause",
+        "impactAssessment": "Product quality impact assessment",
+        "productDisposition": "Product disposition",
+        "conclusion": "Conclusion"
+      },
+      "triage": {
+        "title": "Classification (Quality Assurance)",
+        "submit": "Classify and assign",
+        "dueHelp": "If left empty: 15 days (critical) or 30 days (major or minor).",
+        "criticalNote": "A critical deviation always requires a CAPA.",
+        "dismiss": "Not a deviation",
+        "dismissHelp": "The report is cancelled with its reason."
+      },
+      "investigation": {
+        "title": "Investigation",
+        "save": "Save progress",
+        "submit": "Sign and send to QA",
+        "submitTitle": "Send for QA review",
+        "capaHint": "This deviation requires at least one linked CAPA before submitting.",
+        "newCapa": "Create linked CAPA"
+      },
+      "review": {
+        "title": "Review and closure (Quality Assurance)",
+        "approve": "Sign closure",
+        "reject": "Return the investigation"
+      },
+      "returned": "Returned by QA",
+      "linkedCapas": "Linked CAPAs",
+      "waiting": "Waiting for {name}.",
+      "waitingQa": "Waiting for Quality Assurance review.",
+      "detection": "Detection",
+      "investigationData": "Investigation details"
+    },
+    "capa": {
+      "status": {
+        "OPEN": "Plan in preparation",
+        "IN_PROGRESS": "In progress",
+        "EFFECTIVENESS_CHECK": "Effectiveness check",
+        "CLOSED": "Closed",
+        "CANCELLED": "Cancelled"
+      },
+      "source": {
+        "DEVIATION": "Deviation",
+        "AUDIT": "Audit",
+        "COMPLAINT": "Complaint",
+        "CHANGE_CONTROL": "Change control",
+        "MANAGEMENT_REVIEW": "Management review",
+        "RISK": "Risk management",
+        "OOS": "OOS / OOT",
+        "INSPECTION": "Regulatory inspection",
+        "OTHER": "Other"
+      },
+      "type": {
+        "CORRECTIVE": "Corrective",
+        "PREVENTIVE": "Preventive",
+        "BOTH": "Corrective and preventive"
+      },
+      "steps": {
+        "plan": "Plan",
+        "approval": "Approval",
+        "execution": "Execution",
+        "effectiveness": "Effectiveness",
+        "closure": "Closure"
+      },
+      "new": "New CAPA",
+      "fields": {
+        "title": "Title",
+        "source": "Source",
+        "deviation": "Source deviation",
+        "sourceReference": "Source reference",
+        "problemStatement": "Problem statement",
+        "rootCause": "Root cause",
+        "type": "Type",
+        "owner": "CAPA owner",
+        "effectivenessCriteria": "Effectiveness criterion",
+        "targetDate": "Target date",
+        "effectivenessDueDate": "Planned verification date",
+        "effectivenessResult": "Verification result"
+      },
+      "plan": {
+        "title": "Plan approval (Quality Assurance)",
+        "approve": "Sign plan approval",
+        "reject": "Return the plan",
+        "needsActions": "Add at least one action before approving the plan."
+      },
+      "request": {
+        "title": "Request effectiveness check",
+        "help": "All actions are closed. Ask QA to verify effectiveness.",
+        "submit": "Request verification"
+      },
+      "verify": {
+        "title": "Effectiveness check (Quality Assurance)",
+        "effective": "Sign: effective and close",
+        "notEffective": "Not effective: back to execution",
+        "help": "Describe the evidence that shows, or not, effectiveness against the defined criterion."
+      },
+      "returned": "QA comment",
+      "fromDeviation": "Source: {code}",
+      "data": "CAPA details"
+    },
+    "change": {
+      "status": {
+        "DRAFT": "Draft",
+        "IN_ASSESSMENT": "In assessment",
+        "APPROVED": "Approved",
+        "IMPLEMENTED": "Implemented",
+        "CLOSED": "Closed",
+        "REJECTED": "Rejected",
+        "CANCELLED": "Cancelled"
+      },
+      "type": {
+        "PROCESS": "Process",
+        "EQUIPMENT": "Equipment",
+        "FACILITY": "Facility",
+        "DOCUMENT": "Document",
+        "SUPPLIER": "Supplier",
+        "MATERIAL": "Material",
+        "COMPUTERIZED_SYSTEM": "Computerized system",
+        "ANALYTICAL_METHOD": "Analytical method",
+        "PRODUCT": "Product / marketing authorization",
+        "STORAGE_DISTRIBUTION": "Storage and distribution",
+        "OTHER": "Other"
+      },
+      "steps": {
+        "proposal": "Proposal",
+        "assessment": "Assessment",
+        "approved": "Approval",
+        "implementation": "Implementation",
+        "closure": "Closure"
+      },
+      "new": "Propose change",
+      "fields": {
+        "title": "Title",
+        "description": "Change description",
+        "justification": "Justification",
+        "changeType": "Change type",
+        "process": "Process",
+        "affectedItems": "Affected items (documents, equipment, products…)",
+        "plannedDate": "Planned date",
+        "requester": "Requester",
+        "classification": "Classification",
+        "riskLevel": "Risk level",
+        "regulatoryNotification": "Requires notification to ARCSA",
+        "impactQuality": "Impact on product quality",
+        "impactValidation": "Impact on validation / qualification",
+        "impactDocuments": "Documents to update",
+        "impactTraining": "Training required",
+        "assessmentComment": "QA comment",
+        "closureComment": "Implementation verification"
+      },
+      "draft": {
+        "title": "Proposal",
+        "save": "Save changes",
+        "submit": "Sign and send for assessment",
+        "submitTitle": "Send for assessment"
+      },
+      "assessment": {
+        "title": "Impact and risk assessment (Quality Assurance)",
+        "save": "Save assessment",
+        "decisionTitle": "QA decision",
+        "approve": "Sign approval",
+        "return": "Return to requester",
+        "reject": "Reject",
+        "yes": "Yes",
+        "no": "No"
+      },
+      "implement": {
+        "title": "Implementation",
+        "help": "When all actions are closed, declare the change implemented.",
+        "submit": "Declare implemented"
+      },
+      "close": {
+        "title": "Closure (Quality Assurance)",
+        "submit": "Sign verification and close"
+      },
+      "returned": "QA comment",
+      "data": "Change details",
+      "assessmentData": "Assessment"
     }
   }
 }

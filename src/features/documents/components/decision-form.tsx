@@ -5,8 +5,8 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, Textarea } from "@/components/ui/field";
 import { decisionAction } from "../actions";
-import { SignaturePassword } from "./signature-password";
-import { useDocForm } from "./use-doc-form";
+import { SignaturePassword } from "@/components/forms/signature-password";
+import { useServiceForm } from "@/lib/use-service-form";
 
 /** Firma de revisión o de aprobación, con opción de rechazar y devolver al autor. */
 export function DecisionForm({
@@ -19,7 +19,7 @@ export function DecisionForm({
   stage: "review" | "approval";
 }) {
   const t = useTranslations("documents");
-  const f = useDocForm(decisionAction);
+  const f = useServiceForm(decisionAction);
   const meaning = stage === "review" ? t("meanings.REVIEWED") : t("meanings.APPROVED");
   return (
     <form {...f.formProps} className="space-y-4">

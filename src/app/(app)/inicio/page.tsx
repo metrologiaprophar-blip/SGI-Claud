@@ -7,6 +7,8 @@ import { Icon, type IconKey } from "@/components/ui/icon";
 import { areaHref, CURRENT_PHASE, toolHref, visibleAreas } from "@/config/navigation";
 import { countPendingResetRequests } from "@/features/reset-requests/service";
 import { countInbox } from "@/features/documents/service";
+import { countQualityInbox } from "@/features/quality/inbox";
+import { getServiceContext } from "@/server/action";
 import { isAdmin, requireSession } from "@/server/auth/guards";
 import { getTenantDb } from "@/server/db/tenant";
 
@@ -27,7 +29,8 @@ export default async function HomePage({
   const format = await getFormatter();
   const admin = isAdmin(session.user.role);
 
-  const [activeUsers, pending, me, docInbox] = await Promise.all([
+  const ctx = await getServiceContext();
+  const [activeUsers, pending, me, docInbox, qualityInbox] = await Promise.all([
     db.user.count({ where: { status: "ACTIVE" } }),
     admin ? countPendingResetRequests(db, session.user.id) : Promise.resolve(0),
     db.auditLog.findMany({
@@ -37,6 +40,7 @@ export default async function HomePage({
       select: { createdAt: true },
     }),
     countInbox(db, session.user.id),
+    countQualityInbox(ctx),
   ]);
   const previousLogin = me[1]?.createdAt;
 
@@ -46,6 +50,12 @@ export default async function HomePage({
       value: String(docInbox),
       icon: "docs",
       href: "/documentos/bandeja-revision",
+    },
+    {
+      label: t("home.qualityInbox"),
+      value: String(qualityInbox),
+      icon: "quality",
+      href: "/calidad",
     },
     { label: t("home.yourRole"), value: t(`roles.${session.user.role}`), icon: "user" },
     {
@@ -86,7 +96,7 @@ export default async function HomePage({
 
       {clave === "actualizada" && <Alert tone="success">{t("home.passwordUpdated")}</Alert>}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {stats.map((s) => {
           const body = (
             <Card className="flex h-full items-center gap-4 p-5 transition-shadow hover:shadow-md">

@@ -6,8 +6,8 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
 import { submitForReviewAction } from "../actions";
-import { SignaturePassword } from "./signature-password";
-import { useDocForm } from "./use-doc-form";
+import { SignaturePassword } from "@/components/forms/signature-password";
+import { useServiceForm } from "@/lib/use-service-form";
 
 type UserOption = { id: string; fullName: string; jobTitle: string | null; canApprove: boolean };
 
@@ -27,7 +27,7 @@ export function SubmitReviewForm({
   today: string;
 }) {
   const t = useTranslations();
-  const f = useDocForm(submitForReviewAction);
+  const f = useServiceForm(submitForReviewAction);
   const others = users.filter((u) => u.id !== currentUserId);
   const [readers, setReaders] = useState<string[]>([]);
   const toggle = (id: string) =>
