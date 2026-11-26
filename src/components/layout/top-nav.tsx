@@ -13,6 +13,7 @@ import {
   visibleAreas,
   type NavArea,
   type Standard,
+  STANDARDS,
 } from "@/config/navigation";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/icon";
@@ -61,7 +62,7 @@ export function TopNav({ role, fullName, username, organizationName, pendingRese
       const saved = localStorage.getItem(STANDARD_KEY) as StandardFilter | null;
       // Preferencia guardada en el dispositivo; solo disponible en el cliente.
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (saved) setStandard(saved);
+      if (saved && (saved === "all" || STANDARDS.includes(saved))) setStandard(saved);
     } catch {
       /* sin almacenamiento */
     }
@@ -154,9 +155,11 @@ export function TopNav({ role, fullName, username, organizationName, pendingRese
               className="h-9 rounded-lg border border-slate-300 bg-white px-2 text-sm font-medium text-slate-700"
             >
               <option value="all">{t("standards.all")}</option>
-              <option value="GMP">{t("standards.GMP")}</option>
-              <option value="BPADT">{t("standards.BPADT")}</option>
-              <option value="ISO9001">{t("standards.ISO9001")}</option>
+              {STANDARDS.map((std) => (
+                <option key={std} value={std}>
+                  {t(`standards.${std}`)}
+                </option>
+              ))}
             </select>
           </label>
           {(role === "ADMIN_EMPRESA" || role === "SUPER_ADMIN") && (

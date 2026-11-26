@@ -18,9 +18,19 @@ export type NavArea = {
   basePath?: string;
 };
 
-export type Standard = "GMP" | "BPADT" | "ISO9001";
+export type Standard = "GMP" | "BPADT" | "ISO9001" | "ISO17025" | "ISO14001" | "ISO45001";
+
+/** Normas del SGI de PROPHAR, en el orden del filtro "Vista por norma". */
+export const STANDARDS: Standard[] = [
+  "GMP",
+  "BPADT",
+  "ISO9001",
+  "ISO17025",
+  "ISO14001",
+  "ISO45001",
+];
 export type IconName =
-  "home" | "docs" | "quality" | "gauge" | "truck" | "audit" | "system" | "more" | "admin";
+  "home" | "docs" | "quality" | "gauge" | "truck" | "audit" | "system" | "leaf" | "more" | "admin";
 
 const t = (key: string, slug: string, phase: number, standards: Standard[]): NavTool => ({
   key,
@@ -28,7 +38,10 @@ const t = (key: string, slug: string, phase: number, standards: Standard[]): Nav
   phase,
   standards,
 });
-const ALL: Standard[] = ["GMP", "BPADT", "ISO9001"];
+/** Herramientas comunes a todo el sistema integrado (documentos, CAPA, auditorías, riesgos…). */
+const ALL: Standard[] = STANDARDS;
+/** Calidad de producto y laboratorio (sin ambiente ni SST). */
+const QUALITY: Standard[] = ["GMP", "BPADT", "ISO9001", "ISO17025"];
 
 export const NAV_AREAS: NavArea[] = [
   {
@@ -52,7 +65,7 @@ export const NAV_AREAS: NavArea[] = [
       t("deviations", "desviaciones", 3, ["GMP", "BPADT"]),
       t("capa", "capa", 3, ALL),
       t("changeControl", "control-cambios", 3, ["GMP", "BPADT"]),
-      t("complaints", "quejas", 6, ALL),
+      t("complaints", "quejas", 6, QUALITY),
       t("oos", "oos-oot", 8, ["GMP"]),
       t("batchRelease", "liberacion-lotes", 8, ["GMP"]),
       t("apqr", "revision-anual-producto", 7, ["GMP"]),
@@ -63,11 +76,15 @@ export const NAV_AREAS: NavArea[] = [
     slug: "metrologia",
     icon: "gauge",
     tools: [
-      t("equipment", "equipos", 4, ALL),
-      t("calibrations", "calibraciones", 4, ALL),
-      t("verifications", "verificaciones", 4, ALL),
+      t("equipment", "equipos", 4, QUALITY),
+      t("calibrations", "calibraciones", 4, QUALITY),
+      t("verifications", "verificaciones", 4, QUALITY),
+      t("referenceStandards", "patrones-materiales-referencia", 4, ["ISO17025", "GMP"]),
+      t("uncertainty", "incertidumbre-validacion-metodos", 4, ["ISO17025", "GMP"]),
+      t("proficiency", "ensayos-aptitud", 4, ["ISO17025"]),
+      t("labReports", "informes-certificados", 4, ["ISO17025"]),
       t("qualifications", "calificaciones", 4, ["GMP", "BPADT"]),
-      t("maintenance", "mantenimiento", 4, ALL),
+      t("maintenance", "mantenimiento", 4, QUALITY),
     ],
   },
   {
@@ -100,11 +117,26 @@ export const NAV_AREAS: NavArea[] = [
     slug: "sgi",
     icon: "system",
     tools: [
-      t("context", "contexto", 7, ["ISO9001"]),
+      t("context", "contexto", 7, ALL),
       t("policy", "politica", 7, ALL),
       t("risks", "riesgos", 7, ALL),
       t("indicators", "indicadores", 7, ALL),
       t("managementReview", "revision-direccion", 7, ALL),
+    ],
+  },
+  {
+    key: "hse",
+    slug: "ambiente-sst",
+    icon: "leaf",
+    tools: [
+      t("envAspects", "aspectos-impactos", 9, ["ISO14001"]),
+      t("legalRequirements", "matriz-legal", 9, ["ISO14001", "ISO45001"]),
+      t("waste", "residuos", 9, ["ISO14001"]),
+      t("emergencies", "emergencias", 9, ["ISO14001", "ISO45001"]),
+      t("hazards", "iperc", 9, ["ISO45001"]),
+      t("incidents", "incidentes-accidentes", 9, ["ISO45001"]),
+      t("ppe", "epp", 9, ["ISO45001"]),
+      t("participation", "consulta-participacion", 9, ["ISO45001"]),
     ],
   },
   {

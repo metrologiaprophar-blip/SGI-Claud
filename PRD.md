@@ -2,7 +2,8 @@
 
 Plataforma web para gestionar el **Sistema de Gestión Integrado (SGI)** de PROPHAR:
 **Buenas Prácticas de Manufactura farmacéuticas (BPM/GMP)**, **Buenas Prácticas de Almacenamiento,
-Distribución y Transporte (BPADT)** e **ISO 9001**, con metrología y calibración integradas.
+Distribución y Transporte (BPADT)**, **ISO 9001**, **ISO/IEC 17025**, **ISO 14001** e **ISO 45001**,
+con metrología y calibración integradas.
 
 La arquitectura es multiempresa (SaaS), aunque el primer y principal cliente es PROPHAR.
 
@@ -43,6 +44,7 @@ La arquitectura es multiempresa (SaaS), aunque el primer y principal cliente es 
 | Autoridad sanitaria | ARCSA: inspecciones y certificación de BPM y BPADT, registros sanitarios, notificación de retiros |
 | Identificación fiscal | RUC de 13 dígitos (sociedades: termina en `001`) |
 | Datos personales | LOPDP |
+| Normas del SGI | BPM (GMP) y BPADT de ARCSA · ISO 9001 · ISO/IEC 17025 · ISO 14001 · ISO 45001 |
 
 ## 1. Objetivo, alcance y fases
 
@@ -60,11 +62,12 @@ La arquitectura es multiempresa (SaaS), aunque el primer y principal cliente es 
 | **F1 — Núcleo** | Portal de acceso, autenticación, multiempresa, roles, registro de auditoría preparado para GMP, restablecimiento de clave por aprobación, barra superior por áreas, inicio, administración de usuarios, PWA, ES/EN/PT. **(Este plan)** |
 | F2 — Documentos GMP | Listado maestro, POE/SOP, especificaciones, registros; versiones; revisión y aprobación con **firma electrónica**; distribución, lectura obligatoria y copias controladas. |
 | F3 — Calidad GMP | **Desviaciones**, **CAPA**, **Control de cambios**, con evaluación de riesgo e impacto. |
-| F4 — Metrología y equipos | Inventario de equipos e instrumentos, plan y certificados de **calibración**, verificaciones intermedias, **calificación IQ/OQ/PQ**, mantenimiento, equipos fuera de servicio y evaluación de impacto. |
+| F4 — Metrología y laboratorio | Inventario de equipos e instrumentos, plan y certificados de **calibración**, verificaciones intermedias, **calificación IQ/OQ/PQ**, mantenimiento, equipos fuera de servicio y evaluación de impacto. **ISO/IEC 17025**: patrones y materiales de referencia con trazabilidad, estimación de incertidumbre, validación/verificación de métodos, ensayos de aptitud e interlaboratorios, informes y certificados. |
 | F5 — Almacén y distribución (BPADT) | Áreas y ubicaciones, **monitoreo de temperatura y humedad**, mapeo térmico, **excursiones**, recepción y cuarentena, despacho y transporte, cadena de frío, devoluciones, productos sospechosos/falsificados, **retiros de mercado y simulacros**. |
 | F6 — Auditorías, proveedores, quejas y capacitación | Plan anual, **autoinspecciones GMP/BPADT** con checklist y puntuación, auditorías a proveedores, inspecciones de la autoridad; calificación de proveedores y clientes; **quejas de producto**; matriz y registros de **capacitación**. |
 | F7 — Dirección e indicadores | Indicadores y objetivos, gestión de riesgos de calidad (ICH Q9), **revisión anual de producto (RAP/PQR)**, revisión por la dirección, contexto/partes interesadas/política (ISO 9001). |
 | F8 — Producción y laboratorio | Productos y registros sanitarios, lotes y trazabilidad, liberación de lotes, **OOS/OOT**, validaciones (proceso, limpieza, métodos, sistemas computarizados), monitoreo ambiental; consola SUPER_ADMIN y exportaciones. |
+| F9 — Ambiente y SST | **ISO 14001**: aspectos e impactos, matriz legal, residuos, emergencias y simulacros. **ISO 45001**: IPERC, incidentes y accidentes, EPP, consulta y participación. |
 
 ---
 
@@ -289,15 +292,17 @@ Todas con `organizationId`.
 | **Inicio** | Avisos pendientes, accesos recientes, tarjetas resumen (F1). |
 | **Documentos** | Listado maestro, POE/SOP, especificaciones, registros, bandeja de revisión, mis firmas (F2). |
 | **Calidad GMP** | Desviaciones, CAPA, control de cambios (F3); quejas (F6); OOS/OOT, liberación de lotes, RAP (F7–F8). |
-| **Metrología y equipos** | Equipos e instrumentos, calibraciones, verificaciones, calificaciones, mantenimiento (F4). |
+| **Metrología y laboratorio** | Equipos e instrumentos, calibraciones, verificaciones, patrones, incertidumbre y validación de métodos, ensayos de aptitud, informes (ISO/IEC 17025), calificaciones, mantenimiento (F4). |
 | **Almacén y distribución** | Áreas y sensores, temperatura y humedad, excursiones, recepción, despacho y transporte, devoluciones, retiros y simulacros (F5). |
 | **Auditorías** | Plan anual, autoinspecciones, auditorías a proveedores, inspecciones de la autoridad (F6). |
-| **SGI / ISO 9001** | Contexto, partes interesadas, alcance, política, riesgos, indicadores, revisión por la dirección (F7). |
+| **Ambiente y SST** | Aspectos ambientales, matriz legal, residuos, emergencias, IPERC, incidentes, EPP, consulta y participación (F9). |
+| **Sistema integrado** | Contexto, partes interesadas, alcance, política, riesgos, indicadores, revisión por la dirección comunes a todas las normas (F7). |
 | **Más áreas** | Capacitación, proveedores y clientes, productos y registros sanitarios (F6–F8). |
 | **Administración** *(ADMIN_EMPRESA)* | Usuarios, solicitudes de clave (con contador), registro de auditoría, datos de la empresa (F1). |
 
 - Derecha de la barra: buscador (F2+), notificaciones, idioma, usuario (perfil, cambiar clave, cerrar sesión).
-- Filtro "Vista por norma": *SGI integrado · GMP · BPADT · ISO 9001* (efectivo desde F2).
+- Filtro "Vista por norma": *SGI integrado · BPM · BPADT · ISO 9001 · ISO/IEC 17025 · ISO 14001 · ISO 45001*
+  (filtra las herramientas del menú; desde F2 filtrará también los registros).
 - En F1 las herramientas de fases posteriores muestran una página "Próximamente" con su descripción.
 - Móvil: la barra se convierte en un menú desplegable de pantalla completa.
 
@@ -354,7 +359,6 @@ Respuesta de las acciones: `{ ok: true, data } | { ok: false, error: { code, mes
 
 ## 13. Preguntas abiertas
 
-- Qué normas ISO además de 9001 forman el SGI (¿ISO/IEC 17025 para metrología? ¿14001? ¿45001?).
 - Orden de las fases F2–F8; propuesta: F2 Documentos → F3 Calidad GMP → F4 Metrología → F5 BPADT.
 - Formato de los dataloggers de temperatura (exportan CSV, API, ninguno).
 - Periodos de retención de registros que fija QA.

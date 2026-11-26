@@ -56,7 +56,7 @@
     "subheadline": "Manage your Integrated Management System with full traceability, data integrity and inspection-ready evidence.",
     "benefitGmp": "Good Manufacturing Practices (GMP)",
     "benefitBpadt": "Good Storage, Distribution and Transport Practices",
-    "benefitIso": "ISO 9001 and metrology, integrated",
+    "benefitIso": "ISO 9001, ISO/IEC 17025, ISO 14001 and ISO 45001, integrated",
     "indicatorSsl": "Secure SSL connection",
     "indicatorNoSsl": "Unencrypted connection",
     "indicatorAvailability": "{value} availability",
@@ -116,22 +116,24 @@
     "areas": {
       "documents": "Documents",
       "quality": "GMP Quality",
-      "metrology": "Metrology & equipment",
+      "metrology": "Metrology & laboratory",
       "warehouse": "Warehouse & distribution",
       "audits": "Audits",
-      "system": "IMS / ISO 9001",
+      "system": "Integrated system",
       "more": "More areas",
-      "admin": "Administration"
+      "admin": "Administration",
+      "hse": "Environment & OHS"
     },
     "areaDescriptions": {
       "documents": "GMP document control: procedures, specifications and records with versions and electronic signatures.",
       "quality": "Deviations, CAPA, change control, complaints, OOS/OOT, batch release and product quality review.",
-      "metrology": "Equipment and instruments, calibrations, intermediate checks, qualifications and maintenance.",
+      "metrology": "Equipment, calibrations, reference standards, uncertainty, proficiency testing and reports (ISO/IEC 17025), qualifications and maintenance.",
       "warehouse": "Good Storage, Distribution and Transport Practices: environmental conditions, cold chain and recalls.",
       "audits": "Annual plan, GMP self-inspections, supplier audits and regulatory inspections.",
-      "system": "Context, policy, risks, indicators and management review (ISO 9001).",
+      "system": "Context, policy, risks, indicators and management review of the integrated system.",
       "more": "Training, suppliers and customers, products and marketing authorizations.",
-      "admin": "Users, password requests, audit trail and company details."
+      "admin": "Users, password requests, audit trail and company details.",
+      "hse": "Environmental management (ISO 14001) and occupational health and safety (ISO 45001)."
     },
     "tools": {
       "masterList": "Master list",
@@ -174,7 +176,19 @@
       "users": "Users",
       "resetRequests": "Password requests",
       "auditTrail": "Audit trail",
-      "organization": "Company"
+      "organization": "Company",
+      "referenceStandards": "Reference standards & materials",
+      "uncertainty": "Uncertainty & method validation",
+      "proficiency": "Proficiency testing",
+      "labReports": "Reports & certificates",
+      "envAspects": "Environmental aspects & impacts",
+      "legalRequirements": "Legal requirements register",
+      "waste": "Waste",
+      "emergencies": "Emergencies & drills",
+      "hazards": "Hazards & risks (HIRA)",
+      "incidents": "Incidents & accidents",
+      "ppe": "Personal protective equipment",
+      "participation": "Consultation & participation"
     },
     "toolDescriptions": {
       "masterList": "Inventory of all current documentation, with code, version, owner and review date.",
@@ -217,14 +231,29 @@
       "users": "Create, edit, suspend and reset passwords for users.",
       "resetRequests": "Password reset requests awaiting approval.",
       "auditTrail": "Who did what and when, with old and new values.",
-      "organization": "Company details and security policies."
+      "organization": "Company details and security policies.",
+      "referenceStandards": "Measurement standards and reference materials with their metrological traceability and validity.",
+      "uncertainty": "Measurement uncertainty estimation and method validation or verification.",
+      "proficiency": "Participation in proficiency tests and interlaboratory comparisons, with their evaluation.",
+      "labReports": "Issue and control of test reports and calibration certificates.",
+      "envAspects": "Identification and evaluation of significant environmental aspects by process.",
+      "legalRequirements": "Applicable environmental and OHS legal requirements and compliance evaluation.",
+      "waste": "Recording, classification and disposal of waste, including hazardous waste.",
+      "emergencies": "Emergency response plans, drills and their results.",
+      "hazards": "Hazard identification, risk assessment and determination of controls.",
+      "incidents": "Reporting and investigation of work incidents and accidents.",
+      "ppe": "Assignment, delivery and replacement of personal protective equipment.",
+      "participation": "Worker consultation and participation in OHS management."
     },
     "standards": {
       "label": "View by standard",
       "all": "Integrated IMS",
       "GMP": "GMP",
       "BPADT": "GSDP",
-      "ISO9001": "ISO 9001"
+      "ISO9001": "ISO 9001",
+      "ISO17025": "ISO/IEC 17025",
+      "ISO14001": "ISO 14001",
+      "ISO45001": "ISO 45001"
     },
     "comingSoon": "Coming soon",
     "comingSoonText": "This tool will be added in phase {phase} of the project.",

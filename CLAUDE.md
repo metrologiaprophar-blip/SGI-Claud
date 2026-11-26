@@ -1,7 +1,7 @@
 # CLAUDE.md — SGI Cloud - PROPHAR
 
 Plataforma web para el Sistema de Gestión Integrado de PROPHAR: BPM/GMP farmacéuticas, BPADT
-(almacenamiento, distribución y transporte), ISO 9001 y metrología. Arquitectura multiempresa.
+(almacenamiento, distribución y transporte), ISO 9001, ISO/IEC 17025, ISO 14001 e ISO 45001. Arquitectura multiempresa.
 Requisitos completos en `PRD.md`; leerlo antes de cambiar comportamiento funcional.
 
 ## Stack

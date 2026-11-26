@@ -56,7 +56,7 @@
     "subheadline": "Gestione su Sistema de Gestión Integrado con trazabilidad completa, integridad de datos y evidencias listas para inspección.",
     "benefitGmp": "Buenas Prácticas de Manufactura (BPM/GMP)",
     "benefitBpadt": "Almacenamiento, distribución y transporte (BPADT)",
-    "benefitIso": "ISO 9001 y metrología integradas",
+    "benefitIso": "ISO 9001, ISO/IEC 17025, ISO 14001 e ISO 45001 integradas",
     "indicatorSsl": "Conexión segura SSL",
     "indicatorNoSsl": "Conexión sin cifrar",
     "indicatorAvailability": "Disponibilidad {value}",
@@ -116,22 +116,24 @@
     "areas": {
       "documents": "Documentos",
       "quality": "Calidad GMP",
-      "metrology": "Metrología y equipos",
+      "metrology": "Metrología y laboratorio",
       "warehouse": "Almacén y distribución",
       "audits": "Auditorías",
-      "system": "SGI / ISO 9001",
+      "system": "Sistema integrado",
       "more": "Más áreas",
-      "admin": "Administración"
+      "admin": "Administración",
+      "hse": "Ambiente y SST"
     },
     "areaDescriptions": {
       "documents": "Control documental GMP: procedimientos, especificaciones y registros con versiones y firma electrónica.",
       "quality": "Desviaciones, CAPA, control de cambios, quejas, OOS/OOT, liberación de lotes y revisión anual de producto.",
-      "metrology": "Equipos e instrumentos, calibraciones, verificaciones intermedias, calificaciones y mantenimiento.",
+      "metrology": "Equipos, calibraciones, patrones, incertidumbre, ensayos de aptitud e informes (ISO/IEC 17025), calificaciones y mantenimiento.",
       "warehouse": "Buenas Prácticas de Almacenamiento, Distribución y Transporte: condiciones ambientales, cadena de frío y retiros.",
       "audits": "Plan anual, autoinspecciones GMP/BPADT, auditorías a proveedores e inspecciones de la autoridad.",
-      "system": "Contexto, política, riesgos, indicadores y revisión por la dirección (ISO 9001).",
+      "system": "Contexto, política, riesgos, indicadores y revisión por la dirección del sistema integrado.",
       "more": "Capacitación, proveedores y clientes, productos y registros sanitarios.",
-      "admin": "Usuarios, solicitudes de clave, registro de auditoría y datos de la empresa."
+      "admin": "Usuarios, solicitudes de clave, registro de auditoría y datos de la empresa.",
+      "hse": "Gestión ambiental (ISO 14001) y seguridad y salud en el trabajo (ISO 45001)."
     },
     "tools": {
       "masterList": "Listado maestro",
@@ -174,7 +176,19 @@
       "users": "Usuarios",
       "resetRequests": "Solicitudes de clave",
       "auditTrail": "Registro de auditoría",
-      "organization": "Empresa"
+      "organization": "Empresa",
+      "referenceStandards": "Patrones y materiales de referencia",
+      "uncertainty": "Incertidumbre y validación de métodos",
+      "proficiency": "Ensayos de aptitud",
+      "labReports": "Informes y certificados",
+      "envAspects": "Aspectos e impactos ambientales",
+      "legalRequirements": "Matriz de requisitos legales",
+      "waste": "Residuos",
+      "emergencies": "Emergencias y simulacros",
+      "hazards": "Peligros y riesgos (IPERC)",
+      "incidents": "Incidentes y accidentes",
+      "ppe": "Equipos de protección personal",
+      "participation": "Consulta y participación"
     },
     "toolDescriptions": {
       "masterList": "Inventario de toda la documentación vigente, con código, versión, responsable y fecha de revisión.",
@@ -217,14 +231,29 @@
       "users": "Alta, edición, suspensión y restablecimiento de clave de usuarios.",
       "resetRequests": "Solicitudes de restablecimiento de clave pendientes de aprobar.",
       "auditTrail": "Quién hizo qué y cuándo, con valores anteriores y nuevos.",
-      "organization": "Datos de la empresa y políticas de seguridad."
+      "organization": "Datos de la empresa y políticas de seguridad.",
+      "referenceStandards": "Patrones de medición y materiales de referencia con su trazabilidad metrológica y vigencia.",
+      "uncertainty": "Estimación de la incertidumbre de medición y validación o verificación de métodos.",
+      "proficiency": "Participación en ensayos de aptitud y comparaciones interlaboratorio, con su evaluación.",
+      "labReports": "Emisión y control de informes de ensayo y certificados de calibración.",
+      "envAspects": "Identificación y evaluación de aspectos ambientales significativos por proceso.",
+      "legalRequirements": "Requisitos legales ambientales y de SST aplicables y evaluación de su cumplimiento.",
+      "waste": "Registro, clasificación y disposición de residuos, incluidos los peligrosos.",
+      "emergencies": "Planes de respuesta ante emergencias, simulacros y sus resultados.",
+      "hazards": "Identificación de peligros, evaluación de riesgos y determinación de controles.",
+      "incidents": "Reporte e investigación de incidentes y accidentes de trabajo.",
+      "ppe": "Asignación, entrega y reposición de equipos de protección personal.",
+      "participation": "Consulta y participación de los trabajadores en la gestión de SST."
     },
     "standards": {
       "label": "Vista por norma",
       "all": "SGI integrado",
       "GMP": "BPM / GMP",
       "BPADT": "BPADT",
-      "ISO9001": "ISO 9001"
+      "ISO9001": "ISO 9001",
+      "ISO17025": "ISO/IEC 17025",
+      "ISO14001": "ISO 14001",
+      "ISO45001": "ISO 45001"
     },
     "comingSoon": "Próximamente",
     "comingSoonText": "Esta herramienta se incorporará en la fase {phase} del proyecto.",

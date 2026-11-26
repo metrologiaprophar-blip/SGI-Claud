@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "SGI Cloud - PROPHAR",
     short_name: "SGI Cloud",
-    description: "Sistema de Gestión Integrado de PROPHAR: BPM, BPADT, ISO 9001 y metrología.",
+    description: "Sistema de Gestión Integrado de PROPHAR: BPM, BPADT, ISO 9001, ISO/IEC 17025, ISO 14001 e ISO 45001.",
     start_url: "/inicio",
     scope: "/",
     display: "standalone",
